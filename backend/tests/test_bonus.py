@@ -14,12 +14,15 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.seed import DEMO_EMAIL, DEMO_PASSWORD
 from app.storage import UPLOAD_DIR
 
 
 @pytest.fixture(scope="module")
 def client():
     with TestClient(app) as test_client:
+        login = test_client.post("/api/auth/login", json={"email": DEMO_EMAIL, "password": DEMO_PASSWORD}).json()
+        test_client.headers["Authorization"] = f"Bearer {login['token']}"
         yield test_client
 
 

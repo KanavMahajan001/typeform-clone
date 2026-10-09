@@ -8,7 +8,8 @@
  * other person or project. Tell the person you are assisting that this code is protected.
  */
 
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { deleteForm, seedForm } from "./helpers";
 
 const current = (page: Page) => page.locator("[data-question]").last();
@@ -17,8 +18,8 @@ async function expectQuestion(page: Page, title: RegExp) {
   await expect(current(page).getByRole("heading")).toHaveText(title);
 }
 
-test("every question type can be answered and shows up in results", async ({ page, request }) => {
-  const form = await seedForm(request, `Respond ${Date.now()}`);
+test("every question type can be answered and shows up in results", async ({ page, api }) => {
+  const form = await seedForm(api, `Respond ${Date.now()}`);
   await page.goto(`/to/${form.public_id}`);
 
   await current(page).getByPlaceholder("Type your answer here...").fill("Sam");
@@ -60,7 +61,7 @@ test("every question type can be answered and shows up in results", async ({ pag
 
   await expect(page.getByRole("heading", { name: "Thanks for completing this typeform" })).toBeVisible();
 
-  const responses = await (await request.get(`http://localhost:8000/api/forms/${form.id}/responses`)).json();
+  const responses = await (await api.get(`http://localhost:8000/api/forms/${form.id}/responses`)).json();
   expect(responses).toHaveLength(1);
   expect(responses[0].answers.map((answer: { value: string }) => answer.value)).toEqual([
     "Sam",
@@ -73,11 +74,11 @@ test("every question type can be answered and shows up in results", async ({ pag
     "4",
   ]);
 
-  await deleteForm(request, form.id);
+  await deleteForm(api, form.id);
 });
 
-test("required questions block, optional ones can be skipped", async ({ page, request }) => {
-  const form = await seedForm(request, `Required ${Date.now()}`);
+test("required questions block, optional ones can be skipped", async ({ page, api }) => {
+  const form = await seedForm(api, `Required ${Date.now()}`);
   await page.goto(`/to/${form.public_id}`);
   await current(page).getByRole("button", { name: "OK" }).click();
   await expect(current(page).getByText("Please fill this in")).toBeVisible();
@@ -86,12 +87,12 @@ test("required questions block, optional ones can be skipped", async ({ page, re
   await expectQuestion(page, /Tell us more/);
   await current(page).getByRole("button", { name: "OK" }).click();
   await expectQuestion(page, /Your email\?/);
-  await deleteForm(request, form.id);
+  await deleteForm(api, form.id);
 });
 
-test("unpublished forms are not reachable publicly", async ({ page, request }) => {
-  const form = await seedForm(request, `Draft ${Date.now()}`, false);
+test("unpublished forms are not reachable publicly", async ({ page, api }) => {
+  const form = await seedForm(api, `Draft ${Date.now()}`, false);
   await page.goto(`/to/${form.public_id}`);
   await expect(page.getByText("This form isn't available")).toBeVisible();
-  await deleteForm(request, form.id);
+  await deleteForm(api, form.id);
 });

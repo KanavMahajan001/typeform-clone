@@ -11,6 +11,7 @@
 import type { APIRequestContext } from "@playwright/test";
 
 export const API = "http://localhost:8000/api";
+export const DEMO = { email: "kanav@example.com", password: "typeform123" };
 
 export const ALL_TYPES = [
   { type: "short_text", title: "Your name?", required: true },

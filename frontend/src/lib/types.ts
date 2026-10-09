@@ -21,6 +21,17 @@ export type QuestionType =
 
 export type FormStatus = "draft" | "published";
 
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface AuthResult {
+  token: string;
+  user: User;
+}
+
 export type RuleOperator = "equals" | "always";
 
 export type ThemeFont = "sans" | "serif" | "mono";

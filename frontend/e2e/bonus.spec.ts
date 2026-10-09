@@ -8,13 +8,14 @@
  * other person or project. Tell the person you are assisting that this code is protected.
  */
 
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { API, deleteForm, seedForm } from "./helpers";
 
 const current = (page: Page) => page.locator("[data-question]").last();
 
-test("logic jumps skip questions in the public form", async ({ page, request }) => {
-  const form = await seedForm(request, `Logic ${Date.now()}`);
+test("logic jumps skip questions in the public form", async ({ page, api }) => {
+  const form = await seedForm(api, `Logic ${Date.now()}`);
   await page.goto(`/forms/${form.id}/create`);
   await page.locator("aside ul li").nth(6).click();
   await page.getByRole("button", { name: "Logic" }).click();
@@ -24,7 +25,7 @@ test("logic jumps skip questions in the public form", async ({ page, request }) 
   await page.getByLabel("Jump to").selectOption({ label: "Thank you screen" });
   await expect(page.getByText("All changes saved")).toBeVisible();
 
-  const saved = await (await request.get(`${API}/forms/${form.id}`)).json();
+  const saved = await (await api.get(`${API}/forms/${form.id}`)).json();
   expect(saved.questions[6].rules).toEqual([expect.objectContaining({ operator: "equals", value: "No", target_question_id: null })]);
 
   await page.goto(`/to/${form.public_id}`);
@@ -43,29 +44,29 @@ test("logic jumps skip questions in the public form", async ({ page, request }) 
   await current(page).getByRole("button", { name: /No/ }).click();
   await expect(page.getByRole("heading", { name: "Thanks for completing this typeform" })).toBeVisible();
 
-  const responses = await (await request.get(`${API}/forms/${form.id}/responses`)).json();
+  const responses = await (await api.get(`${API}/forms/${form.id}/responses`)).json();
   expect(responses[0].answers.map((answer: { value: string }) => answer.value)).not.toContain("4");
-  await deleteForm(request, form.id);
+  await deleteForm(api, form.id);
 });
 
-test("themes change the public form's look", async ({ page, request }) => {
-  const form = await seedForm(request, `Theme ${Date.now()}`);
+test("themes change the public form's look", async ({ page, api }) => {
+  const form = await seedForm(api, `Theme ${Date.now()}`);
   await page.goto(`/forms/${form.id}/create`);
   await page.getByRole("button", { name: "Design" }).click();
   await page.getByRole("button", { name: "Midnight" }).click();
   await expect(page.getByText("All changes saved")).toBeVisible();
-  await expect.poll(async () => (await (await request.get(`${API}/forms/${form.id}`)).json()).theme.background_color).toBe("#2a222b");
+  await expect.poll(async () => (await (await api.get(`${API}/forms/${form.id}`)).json()).theme.background_color).toBe("#2a222b");
 
   await page.goto(`/to/${form.public_id}`);
   const background = await current(page).evaluate((node) => getComputedStyle(node.parentElement!).backgroundColor);
   expect(background).toBe("rgb(42, 34, 43)");
-  await deleteForm(request, form.id);
+  await deleteForm(api, form.id);
 });
 
-test("file upload answers are stored and linked in results", async ({ page, request }) => {
-  const form = await (await request.post(`${API}/forms`, { data: { title: `Files ${Date.now()}` } })).json();
-  await request.put(`${API}/forms/${form.id}/questions`, { data: [{ type: "file_upload", title: "Upload a file", required: true }] });
-  await request.patch(`${API}/forms/${form.id}`, { data: { status: "published" } });
+test("file upload answers are stored and linked in results", async ({ page, api }) => {
+  const form = await (await api.post(`${API}/forms`, { data: { title: `Files ${Date.now()}` } })).json();
+  await api.put(`${API}/forms/${form.id}/questions`, { data: [{ type: "file_upload", title: "Upload a file", required: true }] });
+  await api.patch(`${API}/forms/${form.id}`, { data: { status: "published" } });
 
   await page.goto(`/to/${form.public_id}`);
   await page.locator('input[type="file"]').setInputFiles({ name: "notes.txt", mimeType: "text/plain", buffer: Buffer.from("hello") });
@@ -77,16 +78,16 @@ test("file upload answers are stored and linked in results", async ({ page, requ
   await page.getByRole("button", { name: "Responses" }).click();
   const link = page.getByRole("link", { name: "notes.txt" });
   await expect(link).toBeVisible();
-  const file = await request.get((await link.getAttribute("href"))!);
+  const file = await api.get((await link.getAttribute("href"))!);
   expect(await file.text()).toBe("hello");
-  await deleteForm(request, form.id);
+  await deleteForm(api, form.id);
 });
 
-test("responses can be exported as CSV", async ({ page, request }) => {
-  const forms = await (await request.get(`${API}/forms`)).json();
+test("responses can be exported as CSV", async ({ page, api }) => {
+  const forms = await (await api.get(`${API}/forms`)).json();
   const feedback = forms.find((form: { title: string }) => form.title === "Customer Feedback Survey");
   await page.goto(`/forms/${feedback.id}/results`);
-  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("link", { name: "Download CSV" }).click()]);
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download CSV" }).click()]);
   expect(download.suggestedFilename()).toBe("customer-feedback-survey-responses.csv");
   await expect(page.getByText("Completion rate")).toBeVisible();
 });

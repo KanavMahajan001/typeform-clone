@@ -14,7 +14,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .database import Base, SessionLocal, engine
-from .routers import forms, public, responses
+from .migrate import migrate
+from .routers import auth, forms, public, responses
 from .seed import seed
 from .storage import UPLOAD_DIR, UPLOAD_URL
 
@@ -22,6 +23,7 @@ from .storage import UPLOAD_DIR, UPLOAD_URL
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     Base.metadata.create_all(engine)
+    migrate(engine)
     with SessionLocal() as db:
         seed(db)
     yield
@@ -33,7 +35,9 @@ app.add_middleware(
     allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Content-Disposition"],
 )
+app.include_router(auth.router)
 app.include_router(forms.router)
 app.include_router(responses.router)
 app.include_router(public.router)

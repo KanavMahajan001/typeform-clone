@@ -30,6 +30,13 @@ interface Props {
 export function Results({ form, stats, responses }: Props) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Summary");
 
+  const exportCsv = async () => {
+    const { name, blob } = await api.downloadCsv(form.id);
+    const url = URL.createObjectURL(blob);
+    Object.assign(document.createElement("a"), { href: url, download: name }).click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex h-full flex-col bg-admin-bg">
       <div className="flex flex-none items-center gap-6 border-b border-admin-border bg-admin-surface px-4 lg:px-8">
@@ -44,13 +51,14 @@ export function Results({ form, stats, responses }: Props) {
             {tab === item && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-admin-text" />}
           </button>
         ))}
-        <a
-          href={api.csvUrl(form.id)}
+        <button
+          type="button"
+          onClick={exportCsv}
           className="ml-auto flex h-8 items-center gap-2 rounded-lg border border-admin-border px-3 text-sm hover:bg-admin-hover"
         >
           <DownloadIcon />
           Download CSV
-        </a>
+        </button>
       </div>
       <div className="min-h-0 flex-1 overflow-auto p-4 lg:p-8">
         <div className="mx-auto mb-6 grid max-w-3xl grid-cols-3 gap-3">

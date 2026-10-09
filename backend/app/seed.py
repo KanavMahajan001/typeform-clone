@@ -12,6 +12,7 @@ from datetime import timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from .auth import hash_password
 from .models import (
     Answer,
     Form,
@@ -27,6 +28,8 @@ from .models import (
     utcnow,
 )
 
+DEMO_EMAIL = "kanav@example.com"
+DEMO_PASSWORD = "typeform123"
 NAMES = ["Priya Sharma", "Liam Walker", "Sofia Rossi", "Arjun Mehta", "Emma Chen", "Noah Patel", "Mia Johansson", "Lucas Silva"]
 FEEDBACK = [
     "Loved how fast the onboarding was.",
@@ -81,7 +84,7 @@ def seed(db: Session) -> None:
     if db.scalar(select(User)) is not None:
         return
     random.seed(7)
-    user = User(name="Kanav Mahajan", email="kanav@example.com")
+    user = User(name="Kanav Mahajan", email=DEMO_EMAIL, password_hash=hash_password(DEMO_PASSWORD))
     feedback = form(
         "Customer Feedback Survey",
         FormStatus.published,

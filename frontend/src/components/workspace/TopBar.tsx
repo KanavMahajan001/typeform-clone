@@ -11,21 +11,38 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
+import { clearToken } from "@/lib/auth";
+import type { User } from "@/lib/types";
 import { LogoIcon } from "@/components/landing/Logo";
 import { ChevronDownIcon } from "@/components/ui/Icons";
 import { Menu } from "@/components/ui/Menu";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
-export function TopBar() {
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+
+export function TopBar({ user }: { user: User }) {
   const router = useRouter();
+
+  const logout = async () => {
+    await api.logout().catch(() => undefined);
+    clearToken();
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <header className="flex h-16 items-center justify-between px-4 lg:px-6">
       <div className="flex items-center gap-3">
         <LogoIcon className="h-5 w-9" />
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#5c8fd6] text-lg font-medium text-white">K</span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#5c8fd6] text-lg font-medium text-white">{initials(user.name)[0]}</span>
         <span className="flex items-center gap-1 text-base font-medium">
-          Kanav Mahajan
+          {user.name}
           <ChevronDownIcon />
         </span>
       </div>
@@ -34,10 +51,10 @@ export function TopBar() {
         <Menu
           trigger={
             <button type="button" aria-label="Account" className="ml-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#dde8f7] text-sm font-medium text-[#1f4e8c]">
-              KM
+              {initials(user.name)}
             </button>
           }
-          items={[{ label: "Log out", onSelect: () => router.push("/") }]}
+          items={[{ label: "Log out", onSelect: logout }]}
         />
       </div>
     </header>

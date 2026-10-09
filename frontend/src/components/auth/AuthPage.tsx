@@ -13,6 +13,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { api, ApiError } from "@/lib/api";
+import { setToken } from "@/lib/auth";
 import { comingSoon } from "@/lib/links";
 import { Logo } from "@/components/landing/Logo";
 
@@ -65,10 +67,26 @@ export function AuthPage({ mode }: { mode: Mode }) {
   const copy = COPY[mode];
   const verb = mode === "login" ? "Log in" : "Sign up";
   const [agreed, setAgreed] = useState(mode === "login");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    router.push("/forms");
+    const data = Object.fromEntries(new FormData(event.currentTarget)) as Record<string, string>;
+    setBusy(true);
+    setError(null);
+    try {
+      const result =
+        mode === "login"
+          ? await api.login({ email: data.email, password: data.password })
+          : await api.signup({ name: data.name, email: data.email, password: data.password });
+      setToken(result.token);
+      router.push("/forms");
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof ApiError && typeof caught.detail === "string" ? caught.detail : "Something went wrong. Please try again.");
+      setBusy(false);
+    }
   };
 
   return (
@@ -102,8 +120,10 @@ export function AuthPage({ mode }: { mode: Mode }) {
             <span className="h-px flex-1 bg-ink-200" />
           </div>
           <form onSubmit={submit} className="flex flex-col gap-3 text-left">
-            <input type="email" required placeholder="Email" aria-label="Email" autoComplete="email" className={FIELD} />
+            {mode === "signup" && <input name="name" required placeholder="Full name" aria-label="Full name" autoComplete="name" className={FIELD} />}
+            <input name="email" type="email" required placeholder="Email" aria-label="Email" autoComplete="email" className={FIELD} />
             <input
+              name="password"
               type="password"
               required
               minLength={mode === "signup" ? 8 : 1}
@@ -136,10 +156,16 @@ export function AuthPage({ mode }: { mode: Mode }) {
                 </span>
               </label>
             )}
-            <button type="submit" disabled={!agreed} className="btn btn-dark mt-2 w-full disabled:cursor-not-allowed disabled:opacity-50">
+            {error && <p className="text-sm text-danger">{error}</p>}
+            <button type="submit" disabled={!agreed || busy} className="btn btn-dark mt-2 w-full disabled:cursor-not-allowed disabled:opacity-50">
               {copy.submit}
             </button>
           </form>
+          {mode === "login" && (
+            <p className="mt-6 text-xs text-ink-600">
+              Demo account: <span className="font-medium text-ink">kanav@example.com</span> / <span className="font-medium text-ink">typeform123</span>
+            </p>
+          )}
         </div>
       </main>
     </div>

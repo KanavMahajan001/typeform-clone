@@ -43,11 +43,16 @@ cd frontend && npm run test:e2e
 
 The end-to-end suite runs on desktop and phone viewports: it creates forms, adds every question type, edits settings, reorders by drag and keyboard, duplicates and deletes, publishes and unpublishes, previews, fills forms through the public link, checks results, and cleans up after itself.
 
+## Accounts
+
+Sign up at `/signup` or log in at `/login`; every creator sees only their own forms. The seeded demo account is **kanav@example.com / typeform123**. Passwords are stored as PBKDF2 hashes, sessions are random bearer tokens kept in a cookie, and `src/proxy.ts` redirects logged-out visitors away from `/forms`. Public form links need no account.
+
 ## Routes
 
 | Route | What it is |
 | --- | --- |
 | `/` | Landing page (replica of typeform.com) |
+| `/login`, `/signup` | Account pages |
 | `/forms` | Workspace: list, create, rename, duplicate, delete forms |
 | `/forms/:id/create` | Builder: add, edit, reorder, delete questions with live preview |
 | `/forms/:id/share` | Public link and publish / unpublish toggle |
@@ -100,7 +105,8 @@ backend/app
 Source: [`docs/schema.excalidraw`](docs/schema.excalidraw)
 
 ```
-users          id, name, email (unique), created_at
+users          id, name, email (unique), password_hash, created_at
+auth_tokens    id, user_id → users (cascade), token (unique), created_at
 forms          id, public_id (unique, 8 chars), owner_id → users, title, status (draft|published),
                created_at, updated_at
 questions      id, form_id → forms (cascade), type, title, description, required, position
@@ -118,7 +124,14 @@ answers        id, response_id → responses (cascade), question_id → question
 
 ## API
 
-All routes are prefixed with `/api`. Creator routes assume a single default creator (the seeded user). Interactive docs at `/docs`.
+All routes are prefixed with `/api`. Creator routes require `Authorization: Bearer <token>`; forms are scoped to their owner. Interactive docs at `/docs`.
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/auth/signup` | Create an account `{ name, email, password }` → `{ token, user }` |
+| `POST` | `/auth/login` | Log in → `{ token, user }` |
+| `GET` | `/auth/me` | Current user |
+| `POST` | `/auth/logout` | Revoke the token |
 
 | Method | Path | Purpose |
 | --- | --- | --- |
@@ -145,7 +158,7 @@ All routes are prefixed with `/api`. Creator routes assume a single default crea
 
 ## Assumptions
 
-- Authentication is out of scope: the app behaves as the seeded creator (`users` and `forms.owner_id` exist so real auth can be added without a schema change).
+- Authentication is email + password with bearer tokens; social sign-in buttons are placeholders.
 - Multiple choice questions accept a single selection; rating is a 1–5 star scale.
 - Integrations/webhooks, team collaboration, custom endings and payment questions are shown as "Coming soon" placeholders.
 - Fonts, logos, videos and imagery on the landing page are served locally from `frontend/public` to reproduce the original look.
