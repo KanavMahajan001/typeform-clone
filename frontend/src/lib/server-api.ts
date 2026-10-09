@@ -22,7 +22,7 @@ export async function guarded<T>(work: Promise<T>): Promise<T> {
   try {
     return await work;
   } catch (error) {
-    if (error instanceof ApiError && error.status === 401) redirect("/login");
+    if (error instanceof ApiError && error.status === 401) redirect("/logout");
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;
   }

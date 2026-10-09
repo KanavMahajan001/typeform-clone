@@ -50,3 +50,11 @@ test("signup creates a workspace with sample forms and login switches accounts",
   await expect(page.getByText("Kanav Mahajan")).toBeVisible();
   await expect(page.getByText("Customer Feedback Survey")).toBeVisible();
 });
+
+test("a stale session cookie is cleared instead of looping", async ({ page }) => {
+  await page.context().clearCookies();
+  await page.context().addCookies([{ name: "tf_token", value: "expired-token", url: "http://localhost:3000" }]);
+  await page.goto("/forms");
+  await expect(page).toHaveURL(/\/login$/);
+  expect((await page.context().cookies()).find((cookie) => cookie.name === "tf_token")).toBeUndefined();
+});
