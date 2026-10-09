@@ -72,7 +72,7 @@ Source: `docs/Assignment Typeform Clone.pdf` (Typeform Builder — SDE Fullstack
 - [x] Integrations / webhooks
 - [x] Team collaboration & sharing
 - [x] Payment / file-upload question types (file upload implemented; payment is a placeholder)
-- [x] Auth simplified: assume a default logged-in creator
+- [x] Auth simplified: assume a default logged-in creator (went further: real email + password signup/login with per-user workspaces; demo account seeded)
 
 ---
 
