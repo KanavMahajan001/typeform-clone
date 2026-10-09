@@ -12,39 +12,38 @@ import { Settings } from "./Settings";
 
 export type SaveStatus = "saved" | "saving" | "error";
 
+const SAVE_DELAY = 700;
+
 export function Builder({ form }: { form: FormDetail }) {
   const [questions, setQuestions] = useState<Draft[]>(() => form.questions.map(toDraft));
   const [selectedKey, setSelectedKey] = useState<string>(questions[0]?.key ?? ENDING_KEY);
-  const [version, setVersion] = useState(0);
   const [status, setStatus] = useState<SaveStatus>("saved");
-  const latest = useRef(questions);
-  latest.current = questions;
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  useEffect(() => {
-    if (version === 0) return;
-    setStatus("saving");
-    const timer = setTimeout(async () => {
-      const snapshot = latest.current;
-      try {
-        const saved = await api.saveQuestions(form.id, snapshot.map(toInput));
-        setQuestions((current) =>
-          current.map((question) => {
-            const index = snapshot.findIndex((item) => item.key === question.key);
-            return index >= 0 && question.id === undefined ? { ...question, id: saved[index].id } : question;
-          }),
-        );
-        setStatus("saved");
-      } catch {
-        setStatus("error");
-        toast.error("Couldn't save your changes");
-      }
-    }, 700);
-    return () => clearTimeout(timer);
-  }, [version, form.id]);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const persist = async (snapshot: Draft[]) => {
+    try {
+      const saved = await api.saveQuestions(form.id, snapshot.map(toInput));
+      setQuestions((current) =>
+        current.map((question) => {
+          const index = snapshot.findIndex((item) => item.key === question.key);
+          return index >= 0 && question.id === undefined ? { ...question, id: saved[index].id } : question;
+        }),
+      );
+      setStatus("saved");
+    } catch {
+      setStatus("error");
+      toast.error("Couldn't save your changes");
+    }
+  };
 
   const update = (mutate: (current: Draft[]) => Draft[]) => {
-    setQuestions(mutate);
-    setVersion((value) => value + 1);
+    const next = mutate(questions);
+    setQuestions(next);
+    setStatus("saving");
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => persist(next), SAVE_DELAY);
   };
 
   const add = (type: QuestionType) => {

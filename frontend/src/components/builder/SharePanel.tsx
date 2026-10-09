@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 import type { FormSummary } from "@/lib/types";
@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/Button";
 import { LinkIcon } from "@/components/ui/Icons";
 import { Toggle } from "@/components/ui/Toggle";
 
+const subscribe = () => () => {};
+
 export function SharePanel({ form }: { form: FormSummary }) {
   const router = useRouter();
-  const [origin, setOrigin] = useState("");
+  const origin = useSyncExternalStore(subscribe, () => window.location.origin, () => "");
   const published = form.status === "published";
   const link = `${origin}/to/${form.public_id}`;
-
-  useEffect(() => setOrigin(window.location.origin), []);
 
   const copy = async () => {
     await navigator.clipboard.writeText(link);

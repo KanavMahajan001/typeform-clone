@@ -39,7 +39,7 @@ export interface FormDetail extends FormSummary {
   questions: Question[];
 }
 
-export interface PublicQuestion extends Omit<Question, "position"> {}
+export type PublicQuestion = Omit<Question, "position">;
 
 export interface PublicForm {
   public_id: string;
