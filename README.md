@@ -50,6 +50,10 @@ pytest
 
 ## Architecture
 
+![Architecture](docs/architecture.png)
+
+Source: [`docs/architecture.excalidraw`](docs/architecture.excalidraw)
+
 ```
 frontend/src
 ├── app/                  Next.js routes (server components fetch, client components interact)
@@ -83,6 +87,10 @@ backend/app
 **Respondent flow.** `Respondent.tsx` holds the current index, answers and errors. Transitions use `motion` (slide up / down). Enter, arrow keys and option hotkeys (A/B/C…, Y/N, 1–5) are handled at the window level when no text field is focused. Validation runs on the client before advancing and again on the server on submit; server issues are mapped back to the first failing question.
 
 ## Database schema
+
+![Database schema](docs/schema.png)
+
+Source: [`docs/schema.excalidraw`](docs/schema.excalidraw)
 
 ```
 users          id, name, email (unique), created_at
