@@ -1,8 +1,19 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .models import FormStatus, QuestionType
+from .models import FormStatus, QuestionType, RuleOperator
+
+HexColor = Field(pattern=r"^#[0-9a-fA-F]{6}$")
+
+
+class Theme(BaseModel):
+    font: Literal["sans", "serif", "mono"] = "sans"
+    question_color: str = Field("#000000", pattern=r"^#[0-9a-fA-F]{6}$")
+    answer_color: str = Field("#0445af", pattern=r"^#[0-9a-fA-F]{6}$")
+    button_color: str = Field("#0445af", pattern=r"^#[0-9a-fA-F]{6}$")
+    background_color: str = Field("#ffffff", pattern=r"^#[0-9a-fA-F]{6}$")
 
 
 class OptionIn(BaseModel):
@@ -15,6 +26,21 @@ class OptionOut(OptionIn):
     id: int
 
 
+class RuleIn(BaseModel):
+    operator: RuleOperator
+    value: str | None = Field(default=None, max_length=255)
+    target_index: int | None = None
+
+
+class RuleOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    operator: RuleOperator
+    value: str | None
+    target_question_id: int | None
+
+
 class QuestionIn(BaseModel):
     id: int | None = None
     type: QuestionType
@@ -22,6 +48,7 @@ class QuestionIn(BaseModel):
     description: str | None = Field(default=None, max_length=2000)
     required: bool = False
     options: list[OptionIn] = []
+    rules: list[RuleIn] = []
 
 
 class QuestionOut(BaseModel):
@@ -34,6 +61,7 @@ class QuestionOut(BaseModel):
     required: bool
     position: int
     options: list[OptionOut]
+    rules: list[RuleOut]
 
 
 class FormCreate(BaseModel):
@@ -43,6 +71,7 @@ class FormCreate(BaseModel):
 class FormUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
     status: FormStatus | None = None
+    theme: Theme | None = None
 
 
 class FormSummary(BaseModel):
@@ -53,11 +82,14 @@ class FormSummary(BaseModel):
     title: str
     status: FormStatus
     response_count: int
+    starts_count: int
+    completed_count: int
     created_at: datetime
     updated_at: datetime
 
 
 class FormDetail(FormSummary):
+    theme: Theme
     questions: list[QuestionOut]
 
 
@@ -70,6 +102,7 @@ class PublicQuestion(BaseModel):
     description: str | None
     required: bool
     options: list[OptionOut]
+    rules: list[RuleOut]
 
 
 class PublicForm(BaseModel):
@@ -77,7 +110,17 @@ class PublicForm(BaseModel):
 
     public_id: str
     title: str
+    theme: Theme
     questions: list[PublicQuestion]
+
+
+class SessionOut(BaseModel):
+    id: int
+
+
+class UploadOut(BaseModel):
+    url: str
+    name: str
 
 
 class AnswerIn(BaseModel):
@@ -87,6 +130,7 @@ class AnswerIn(BaseModel):
 
 class ResponseCreate(BaseModel):
     answers: list[AnswerIn]
+    session_id: int | None = None
 
 
 class AnswerOut(BaseModel):
@@ -121,4 +165,7 @@ class QuestionStats(BaseModel):
 
 class FormStats(BaseModel):
     responses: int
+    starts: int
+    completed: int
+    completion_rate: float | None
     questions: list[QuestionStats]

@@ -22,3 +22,4 @@ __pycache__/
 
 ui_context/
 docs/*.pdf
+backend/uploads/

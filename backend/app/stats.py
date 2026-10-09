@@ -30,4 +30,10 @@ def question_stats(question: Question) -> QuestionStats:
 
 
 def build_stats(form: Form) -> FormStats:
-    return FormStats(responses=form.response_count, questions=[question_stats(q) for q in form.questions])
+    return FormStats(
+        responses=form.response_count,
+        starts=form.starts_count,
+        completed=form.completed_count,
+        completion_rate=round(form.completed_count / form.starts_count * 100) if form.starts_count else None,
+        questions=[question_stats(q) for q in form.questions],
+    )

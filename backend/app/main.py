@@ -3,10 +3,12 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from .database import Base, SessionLocal, engine
 from .routers import forms, public, responses
 from .seed import seed
+from .storage import UPLOAD_DIR, UPLOAD_URL
 
 
 @asynccontextmanager
@@ -27,6 +29,7 @@ app.add_middleware(
 app.include_router(forms.router)
 app.include_router(responses.router)
 app.include_router(public.router)
+app.mount(UPLOAD_URL, StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 
 @app.get("/api/health")

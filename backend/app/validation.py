@@ -1,11 +1,13 @@
 import re
 
+from .logic import path
 from .models import Form, Question, QuestionType
 from .schemas import AnswerIn, ValidationIssue
 
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 RATING_MAX = 5
 YES_NO = ("Yes", "No")
+UPLOAD_PREFIX = "/api/uploads/"
 
 
 class AnswerError(ValueError):
@@ -57,6 +59,13 @@ def _rating(_: Question, value) -> str:
     return str(rating)
 
 
+def _file(_: Question, value) -> str:
+    value = str(value)
+    if not value.startswith(UPLOAD_PREFIX) or "/" in value[len(UPLOAD_PREFIX):]:
+        raise AnswerError("Please upload a file")
+    return value
+
+
 NORMALIZERS = {
     QuestionType.short_text: _text,
     QuestionType.long_text: _text,
@@ -66,6 +75,7 @@ NORMALIZERS = {
     QuestionType.number: _number,
     QuestionType.yes_no: _yes_no,
     QuestionType.rating: _rating,
+    QuestionType.file_upload: _file,
 }
 
 
@@ -81,7 +91,7 @@ def validate_submission(form: Form, answers: list[AnswerIn]) -> tuple[dict[int, 
     given = {answer.question_id: answer.value for answer in answers}
     values: dict[int, str] = {}
     issues: list[ValidationIssue] = []
-    for question in form.questions:
+    for question in path(form, given):
         try:
             value = normalize_answer(question, given.get(question.id))
         except AnswerError as error:
