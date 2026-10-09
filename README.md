@@ -45,7 +45,7 @@ The end-to-end suite runs on desktop and phone viewports: it creates forms, adds
 
 ## Accounts
 
-Sign up at `/signup` or log in at `/login`; every creator sees only their own forms. The seeded demo account is **kanav@example.com / typeform123**. Passwords are stored as PBKDF2 hashes, sessions are random bearer tokens kept in a cookie, and `src/proxy.ts` redirects logged-out visitors away from `/forms`. Public form links need no account.
+Sign up at `/signup` or log in at `/login`; every creator sees only their own forms, and every new account starts with the same sample forms and responses as the demo account. The seeded demo account is **kanav@example.com / typeform123**. Passwords are stored as PBKDF2 hashes, sessions are random bearer tokens kept in a cookie, and `src/proxy.ts` redirects logged-out visitors away from `/forms`. Public form links need no account.
 
 ## Routes
 

@@ -58,13 +58,17 @@ def test_signup_login_and_logout(client):
     assert client.get("/api/auth/me", headers=auth(again["token"])).status_code == 200
 
 
-def test_forms_are_scoped_to_their_owner(client):
+def test_new_accounts_get_sample_forms_scoped_to_them(client):
     kanav = client.post("/api/auth/login", json={"email": DEMO_EMAIL, "password": DEMO_PASSWORD}).json()["token"]
     other = client.post("/api/auth/signup", json={"name": "Other", "email": "other@example.com", "password": "longenough"}).json()["token"]
 
-    assert client.get("/api/forms", headers=auth(other)).json() == []
+    samples = client.get("/api/forms", headers=auth(other)).json()
+    assert sorted(form["title"] for form in samples) == ["Customer Feedback Survey", "Event Registration", "Product Research Interview"]
+    assert sum(form["response_count"] for form in samples) == 14
+    assert all(form["id"] not in {f["id"] for f in client.get("/api/forms", headers=auth(kanav)).json()} for form in samples)
+
     mine = client.post("/api/forms", json={"title": "Only mine"}, headers=auth(other)).json()
-    assert [form["title"] for form in client.get("/api/forms", headers=auth(other)).json()] == ["Only mine"]
+    assert "Only mine" in [form["title"] for form in client.get("/api/forms", headers=auth(other)).json()]
     assert all(form["title"] != "Only mine" for form in client.get("/api/forms", headers=auth(kanav)).json())
 
     assert client.get(f"/api/forms/{mine['id']}", headers=auth(kanav)).status_code == 404

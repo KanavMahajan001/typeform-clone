@@ -83,8 +83,13 @@ def abandoned(form_: Form, count: int) -> None:
 def seed(db: Session) -> None:
     if db.scalar(select(User)) is not None:
         return
-    random.seed(7)
     user = User(name="Kanav Mahajan", email=DEMO_EMAIL, password_hash=hash_password(DEMO_PASSWORD))
+    db.add(user)
+    seed_workspace(db, user)
+
+
+def seed_workspace(db: Session, user: User) -> None:
+    random.seed(7)
     feedback = form(
         "Customer Feedback Survey",
         FormStatus.published,
@@ -120,8 +125,7 @@ def seed(db: Session) -> None:
             question(T.file_upload, "Share a screenshot of that form", required=False),
         ],
     )
-    user.forms = [feedback, registration, research]
-    db.add(user)
+    user.forms.extend([feedback, registration, research])
     db.flush()
 
     recommend = feedback.questions[4]

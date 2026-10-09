@@ -15,6 +15,7 @@ from ..database import get_db
 from ..deps import current_token, current_user
 from ..models import AuthToken, User
 from ..schemas import AuthOut, LoginIn, SignupIn, UserOut
+from ..seed import seed_workspace
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -34,6 +35,7 @@ def signup(data: SignupIn, db: Session = Depends(get_db)):
     user = User(name=data.name.strip(), email=email, password_hash=hash_password(data.password))
     db.add(user)
     db.flush()
+    seed_workspace(db, user)
     return issue(user, db)
 
 

@@ -89,7 +89,7 @@ Source: `docs/Assignment Typeform Clone.pdf` (Typeform Builder — SDE Fullstack
 
 ## 5. Data & Documentation Requirements
 
-- [x] **Seed data:** a couple of published forms with mixed question types and some existing responses, so the app is usable right away
+- [x] **Seed data:** a couple of published forms with mixed question types and some existing responses, so the app is usable right away (every new signup also gets these sample forms)
 - [x] **Database schema:** my own design, with proper relationships (this is graded)
 - [x] **README** includes:
   - [x] Setup instructions

@@ -17,7 +17,7 @@ test("logged-out visitors are sent to login", async ({ page }) => {
   await expect(page).toHaveURL(/\/login$/);
 });
 
-test("signup creates a private workspace and login switches accounts", async ({ page }) => {
+test("signup creates a workspace with sample forms and login switches accounts", async ({ page }) => {
   await page.context().clearCookies();
   const email = `saumil-${Date.now()}@example.com`;
 
@@ -30,8 +30,9 @@ test("signup creates a private workspace and login switches accounts", async ({ 
   await page.getByRole("button", { name: /Get started/ }).click();
   await expect(page).toHaveURL(/\/forms$/);
   await expect(page.getByText("Saumil Makkar")).toBeVisible();
-  await expect(page.getByText("No forms yet")).toBeVisible();
-  await expect(page.getByText("Customer Feedback Survey")).toHaveCount(0);
+  await expect(page.getByText("Customer Feedback Survey")).toBeVisible();
+  await expect(page.getByText("Event Registration")).toBeVisible();
+  await expect(page.getByText("Product Research Interview")).toBeVisible();
 
   await page.getByRole("button", { name: "Account" }).click();
   await page.getByRole("button", { name: "Log out" }).click();
