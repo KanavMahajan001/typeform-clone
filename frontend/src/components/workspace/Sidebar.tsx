@@ -1,44 +1,75 @@
 "use client";
 
 import { useState } from "react";
-import { LogoIcon } from "@/components/landing/Logo";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
-import { ChevronDownIcon, FolderIcon, PlusIcon, SearchIcon } from "@/components/ui/Icons";
+import { ChevronUpIcon, LayersIcon, PlusIcon, SearchIcon } from "@/components/ui/Icons";
 import { CreateFormModal } from "./CreateFormModal";
 
-export function Sidebar() {
+const RESPONSE_LIMIT = 10;
+
+export function Sidebar({ formCount, responseCount }: { formCount: number; responseCount: number }) {
   const [creating, setCreating] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   return (
-    <aside className="flex w-64 flex-none flex-col border-r border-admin-border bg-admin-bg px-4 py-5">
-      <div className="mb-6 flex items-center gap-2 px-2">
-        <LogoIcon className="h-4 w-7" />
-        <button type="button" className="flex items-center gap-1 text-sm font-medium">
-          Kanav Mahajan
-          <ChevronDownIcon />
-        </button>
+    <aside className="flex w-80 flex-none flex-col bg-admin-bg">
+      <div className="p-5">
+        <Button className="h-11 w-full text-base" onClick={() => setCreating(true)}>
+          <PlusIcon width={18} height={18} />
+          Create form
+        </Button>
       </div>
-      <Button className="w-full" onClick={() => setCreating(true)}>
-        <PlusIcon />
-        Create a new form
-      </Button>
-      <label className="mt-4 flex h-9 items-center gap-2 rounded-lg border border-admin-border bg-white px-3 text-sm text-admin-muted">
-        <SearchIcon />
+      <label className="flex h-14 items-center gap-3 border-y border-admin-border px-7 text-base text-admin-muted">
+        <SearchIcon width={18} height={18} />
         <input placeholder="Search" className="w-full bg-transparent outline-none placeholder:text-admin-muted" />
       </label>
-      <nav className="mt-6 flex flex-col gap-1 text-sm">
-        <p className="px-2 pb-1 text-xs font-medium uppercase tracking-wide text-admin-muted">Private</p>
-        <span className="flex items-center gap-2 rounded-lg bg-white px-2 py-2 font-medium shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
-          <FolderIcon />
-          My workspace
-        </span>
-      </nav>
-      <div className="mt-auto rounded-lg border border-admin-border bg-white p-3 text-xs">
-        <p className="font-medium">Free plan</p>
-        <p className="mt-1 text-admin-muted">Responses collected this month</p>
-        <div className="mt-2 h-1.5 rounded-full bg-admin-border">
-          <div className="h-full w-1/3 rounded-full bg-admin-text" />
+      <nav className="flex flex-col gap-1 p-5 text-base">
+        <div className="flex items-center justify-between px-2 py-1">
+          <span className="flex items-center gap-2 font-medium">
+            <LayersIcon width={18} height={18} />
+            Workspaces
+          </span>
+          <Button
+            variant="secondary"
+            size="sm"
+            aria-label="Add workspace"
+            className="px-2"
+            onClick={() => toast("Multiple workspaces are coming soon")}
+          >
+            <PlusIcon />
+          </Button>
         </div>
+        <button
+          type="button"
+          onClick={() => setExpanded((value) => !value)}
+          className="flex items-center justify-between px-4 py-3 font-medium"
+        >
+          Private
+          <ChevronUpIcon className={`text-admin-muted transition-transform ${expanded ? "" : "rotate-180"}`} />
+        </button>
+        {expanded && (
+          <span className="flex items-center justify-between rounded-lg bg-admin-hover px-4 py-3 font-medium">
+            My workspace
+            <span className="text-sm text-purple-700">{formCount}</span>
+          </span>
+        )}
+      </nav>
+      <div className="mt-auto border-t border-admin-border p-5 text-base">
+        <p>Responses collected</p>
+        <div className="mt-3 h-1 rounded-full bg-admin-border">
+          <div
+            className="h-full rounded-full bg-admin-text"
+            style={{ width: `${Math.min(100, (responseCount / RESPONSE_LIMIT) * 100)}%` }}
+          />
+        </div>
+        <p className="mt-3">
+          <strong className="font-medium">{responseCount}</strong>
+          <span className="text-sm text-admin-muted"> / {RESPONSE_LIMIT}</span>
+        </p>
+        <Button variant="secondary" className="mt-4" onClick={() => toast("Plans and billing are coming soon")}>
+          Increase response limit
+        </Button>
       </div>
       <CreateFormModal open={creating} onClose={() => setCreating(false)} />
     </aside>

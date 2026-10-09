@@ -1,16 +1,17 @@
 import { api } from "@/lib/api";
-import { FormList } from "@/components/workspace/FormList";
-import { WorkspaceHeader } from "@/components/workspace/WorkspaceHeader";
+import { Sidebar } from "@/components/workspace/Sidebar";
+import { Workspace } from "@/components/workspace/Workspace";
 
 export const dynamic = "force-dynamic";
 
 export default async function WorkspacePage() {
   const forms = await api.listForms();
+  const responses = forms.reduce((total, form) => total + form.response_count, 0);
 
   return (
-    <div className="mx-auto max-w-5xl px-10 py-10">
-      <WorkspaceHeader count={forms.length} />
-      <FormList forms={forms} />
+    <div className="mx-6 flex flex-1">
+      <Sidebar formCount={forms.length} responseCount={responses} />
+      <Workspace forms={forms} />
     </div>
   );
 }

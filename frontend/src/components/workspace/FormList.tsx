@@ -4,12 +4,15 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
-import { pluralize, timeAgo } from "@/lib/format";
+import { formatDay, pluralize } from "@/lib/format";
 import type { FormSummary } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
-import { CopyIcon, FormIcon, MoreIcon, TrashIcon } from "@/components/ui/Icons";
+import { CopyIcon, FormIcon, IntegrationsIcon, MoreIcon, TrashIcon } from "@/components/ui/Icons";
 import { Menu } from "@/components/ui/Menu";
 import { Modal } from "@/components/ui/Modal";
+import type { View } from "./WorkspaceHeader";
+
+const COLUMNS = "grid-cols-[1fr_7rem_7rem_8rem_7rem_3rem]";
 
 function RenameModal({ form, onClose }: { form: FormSummary | null; onClose: () => void }) {
   const router = useRouter();
@@ -69,10 +72,31 @@ function DeleteModal({ form, onClose }: { form: FormSummary | null; onClose: () 
   );
 }
 
-export function FormList({ forms }: { forms: FormSummary[] }) {
+function StatusPill({ status }: { status: FormSummary["status"] }) {
+  const published = status === "published";
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-xs font-medium ${published ? "bg-[#e4f3ea] text-[#1f6b4d]" : "bg-admin-hover text-admin-muted"}`}
+    >
+      {published ? "Published" : "Draft"}
+    </span>
+  );
+}
+
+function Tile() {
+  return (
+    <span className="flex h-9 w-9 flex-none items-center justify-center rounded-lg bg-gradient-to-br from-[#5c8fd6] to-[#8aa6c9] text-white">
+      <FormIcon width={18} height={18} />
+    </span>
+  );
+}
+
+export function FormList({ forms, view }: { forms: FormSummary[]; view: View }) {
   const router = useRouter();
   const [renaming, setRenaming] = useState<FormSummary | null>(null);
   const [deleting, setDeleting] = useState<FormSummary | null>(null);
+
+  const open = (form: FormSummary) => router.push(`/forms/${form.id}/create`);
 
   const duplicate = async (form: FormSummary) => {
     await api.duplicateForm(form.id);
@@ -80,58 +104,104 @@ export function FormList({ forms }: { forms: FormSummary[] }) {
     router.refresh();
   };
 
+  const menu = (form: FormSummary) => (
+    <Menu
+      trigger={
+        <button type="button" aria-label="More" className="rounded-md p-1.5 text-admin-muted hover:bg-admin-hover">
+          <MoreIcon />
+        </button>
+      }
+      items={[
+        { label: "Open", onSelect: () => open(form), icon: <FormIcon /> },
+        { label: "Rename", onSelect: () => setRenaming(form) },
+        { label: "Duplicate", onSelect: () => duplicate(form), icon: <CopyIcon /> },
+        { label: "Delete", onSelect: () => setDeleting(form), danger: true, icon: <TrashIcon /> },
+      ]}
+    />
+  );
+
+  const integrations = (
+    <button
+      type="button"
+      aria-label="Integrations"
+      onClick={(event) => {
+        event.stopPropagation();
+        toast("Integrations are coming soon");
+      }}
+      className="rounded-md border border-admin-border p-1.5 text-admin-muted hover:bg-admin-hover"
+    >
+      <IntegrationsIcon />
+    </button>
+  );
+
+  if (forms.length === 0) {
+    return <p className="py-16 text-center text-base text-admin-muted">No forms yet. Create your first form to get started.</p>;
+  }
+
+  const modals = (
+    <>
+      {renaming && <RenameModal key={renaming.id} form={renaming} onClose={() => setRenaming(null)} />}
+      <DeleteModal form={deleting} onClose={() => setDeleting(null)} />
+    </>
+  );
+
+  if (view === "grid") {
+    return (
+      <>
+        <ul className="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-4">
+          {forms.map((form) => (
+            <li
+              key={form.id}
+              onClick={() => open(form)}
+              className="flex cursor-pointer flex-col gap-4 rounded-xl border border-admin-border p-4 transition-colors hover:bg-admin-hover"
+            >
+              <div className="flex items-start justify-between">
+                <Tile />
+                {menu(form)}
+              </div>
+              <p className="truncate text-base font-medium">{form.title}</p>
+              <div className="flex items-center justify-between text-sm text-admin-muted">
+                <StatusPill status={form.status} />
+                {pluralize(form.response_count, "response")}
+              </div>
+            </li>
+          ))}
+        </ul>
+        {modals}
+      </>
+    );
+  }
+
   return (
     <>
-      <div className="grid grid-cols-[1fr_8rem_8rem_8rem_3rem] items-center px-4 pb-2 text-xs font-medium uppercase tracking-wide text-admin-muted">
-        <span>Name</span>
+      <div className={`grid ${COLUMNS} items-center px-4 pb-3 text-base text-admin-muted`}>
+        <span />
         <span>Responses</span>
+        <span>Completed</span>
         <span>Updated</span>
-        <span>Status</span>
+        <span>Integrations</span>
       </div>
       <ul className="divide-y divide-admin-border rounded-xl border border-admin-border">
         {forms.map((form) => (
           <li
             key={form.id}
-            onClick={() => router.push(`/forms/${form.id}/create`)}
-            className="grid cursor-pointer grid-cols-[1fr_8rem_8rem_8rem_3rem] items-center px-4 py-3 text-sm transition-colors hover:bg-admin-hover"
+            onClick={() => open(form)}
+            className={`grid ${COLUMNS} cursor-pointer items-center px-4 py-3 text-base transition-colors hover:bg-admin-hover`}
           >
             <span className="flex min-w-0 items-center gap-3">
-              <span className="flex h-9 w-9 flex-none items-center justify-center rounded-lg bg-admin-bg text-admin-muted">
-                <FormIcon width={18} height={18} />
-              </span>
+              <Tile />
               <span className="truncate font-medium">{form.title}</span>
+              <StatusPill status={form.status} />
             </span>
-            <span>{form.response_count}</span>
-            <span className="text-admin-muted">{timeAgo(form.updated_at)}</span>
-            <span>
-              <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${form.status === "published" ? "bg-[#e4f3ea] text-[#1f6b4d]" : "bg-admin-bg text-admin-muted"}`}
-              >
-                <span className={`h-1.5 w-1.5 rounded-full ${form.status === "published" ? "bg-[#1f6b4d]" : "bg-admin-muted"}`} />
-                {form.status === "published" ? "Published" : "Draft"}
-              </span>
-            </span>
-            <Menu
-              trigger={
-                <button type="button" aria-label="More" className="rounded-md p-1.5 text-admin-muted hover:bg-admin-border">
-                  <MoreIcon />
-                </button>
-              }
-              items={[
-                { label: "Open", onSelect: () => router.push(`/forms/${form.id}/create`), icon: <FormIcon /> },
-                { label: "Rename", onSelect: () => setRenaming(form) },
-                { label: "Duplicate", onSelect: () => duplicate(form), icon: <CopyIcon /> },
-                { label: "Delete", onSelect: () => setDeleting(form), danger: true, icon: <TrashIcon /> },
-              ]}
-            />
+            <span>{form.response_count || "-"}</span>
+            <span>{form.response_count ? "100%" : "-"}</span>
+            <span>{formatDay(form.updated_at)}</span>
+            <span>{integrations}</span>
+            {menu(form)}
           </li>
         ))}
-        {forms.length === 0 && (
-          <li className="px-4 py-12 text-center text-sm text-admin-muted">No forms yet. Create your first form to get started.</li>
-        )}
       </ul>
-      {renaming && <RenameModal key={renaming.id} form={renaming} onClose={() => setRenaming(null)} />}
-      <DeleteModal form={deleting} onClose={() => setDeleting(null)} />
+      {modals}
     </>
   );
 }
