@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { questionMeta } from "@/lib/questions";
+import type { AnswerValue } from "@/lib/types";
 import { FormFooter } from "@/components/form/FormFooter";
 import { OkButton } from "@/components/form/OkButton";
 import { QuestionNumber } from "@/components/form/QuestionHeader";
@@ -100,6 +102,11 @@ interface Props {
   onChange: (changes: Partial<Draft>) => void;
 }
 
+function AnswerPreview({ question }: { question: Draft }) {
+  const [value, setValue] = useState<AnswerValue>(null);
+  return <QuestionField key={question.key} type={question.type} options={[]} value={value} onChange={setValue} />;
+}
+
 export function Canvas({ question, index, total, status, onChange }: Props) {
   return (
     <section className="hidden min-w-0 flex-1 flex-col bg-admin-bg lg:flex">
@@ -134,9 +141,7 @@ export function Canvas({ question, index, total, status, onChange }: Props) {
                   {questionMeta(question.type).hasOptions ? (
                     <OptionEditor options={question.options} onChange={(options) => onChange({ options })} />
                   ) : (
-                    <div className="pointer-events-none select-none">
-                      <QuestionField type={question.type} options={[]} value={null} onChange={() => {}} />
-                    </div>
+                    <AnswerPreview question={question} />
                   )}
                   <OkButton label={index === total - 1 ? "Submit" : "OK"} />
                 </div>
