@@ -28,7 +28,7 @@ export function Customers() {
               className={`absolute inset-0 grid grid-cols-3 gap-3 transition-opacity duration-700 sm:grid-cols-5 ${index === row ? "opacity-100" : "opacity-0"}`}
             >
               {logos.map((logo) => (
-                <div key={logo} className="flex h-20 items-center justify-center rounded-md bg-white p-4">
+                <div key={logo} className="flex h-20 items-center justify-center rounded-media bg-white p-4">
                   <img src={`/logos/${logo}.svg`} alt={logo} className="max-h-[1.8875rem] w-full max-w-[85%] object-contain" />
                 </div>
               ))}

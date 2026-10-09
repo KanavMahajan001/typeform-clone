@@ -43,7 +43,7 @@ export function TextMedia({ eyebrow, title, text, cta, video, poster, features, 
               </a>
             </div>
           </div>
-          <div className="relative w-full max-w-[42.31rem] overflow-hidden rounded-md lg:w-[57%]">
+          <div className="relative w-full max-w-[42.31rem] overflow-hidden rounded-media lg:w-[57%]">
             <img src={poster} alt="" className="absolute inset-0 h-full w-full object-cover p-px" />
             <video src={video} autoPlay muted loop playsInline className="relative block aspect-[1920/1346] w-full object-cover" />
           </div>

@@ -26,7 +26,7 @@ function FeatureBlock({ column }: { column: NavColumn }) {
   if (!column.feature) return null;
   return (
     <div className="flex flex-col gap-2">
-      <img src={column.feature.image} alt="" className="mb-2 w-full max-w-[13rem] rounded-xl" />
+      <img src={column.feature.image} alt="" className="mb-2 w-full max-w-[13rem] rounded-card" />
       <p className="text-base leading-[1.4]">{column.feature.text}</p>
       <a href="#" className="text-sm underline underline-offset-4">
         {column.feature.cta}

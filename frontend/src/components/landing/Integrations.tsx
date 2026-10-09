@@ -18,7 +18,7 @@ function Row({ reverse }: { reverse?: boolean }) {
         {[...items, ...items].map((app, index) => (
           <div
             key={`${app.name}-${index}`}
-            className="group relative flex h-20 w-[12.5rem] flex-none items-center justify-center overflow-hidden rounded-md bg-ink-25 px-8 py-4 transition-[border-radius] duration-300 hover:rounded-[2rem]"
+            className="group relative flex h-20 w-[12.5rem] flex-none items-center justify-center overflow-hidden rounded-media bg-ink-25 px-8 py-4 transition-[border-radius] duration-300 hover:rounded-[2rem]"
           >
             <div
               className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -45,7 +45,7 @@ export function Integrations() {
   return (
     <section className="bg-ink-25 py-12 text-ink">
       <div className="container-site">
-        <div className="flex flex-col gap-12 rounded-xl bg-white py-20">
+        <div className="flex flex-col gap-12 rounded-section bg-white py-20">
           <h2 className="heading-four px-12 text-center">Integrate with your tech stack</h2>
           <div className="flex flex-col gap-4">
             <Row />

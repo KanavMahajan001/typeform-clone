@@ -31,7 +31,7 @@ export function SocialProof() {
                 key={slide.text}
                 type="button"
                 onClick={() => setActive((active + offset) % STORIES.length)}
-                className={`relative overflow-hidden rounded-md bg-ink-100 text-left transition-[width,background-color] duration-300 hover:bg-[#eccffa85] ${isActive ? "lg:w-[52%]" : "lg:w-[24%]"}`}
+                className={`relative overflow-hidden rounded-media bg-ink-100 text-left transition-[width,background-color] duration-300 hover:bg-[#eccffa85] ${isActive ? "lg:w-[52%]" : "lg:w-[24%]"}`}
               >
                 <img src="/images/bg-shine.avif" alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
                 <div className="relative z-10 flex h-full flex-col gap-[3.38rem] px-8 py-10">
