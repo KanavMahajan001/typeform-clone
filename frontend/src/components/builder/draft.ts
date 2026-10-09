@@ -9,7 +9,15 @@
  */
 
 import { questionMeta } from "@/lib/questions";
-import type { Question, QuestionInput, QuestionType } from "@/lib/types";
+import type { Question, QuestionInput, QuestionType, RuleOperator } from "@/lib/types";
+
+export const ENDING_KEY = "ending";
+
+export interface DraftRule {
+  operator: RuleOperator;
+  value: string | null;
+  targetKey: string;
+}
 
 export interface Draft {
   key: string;
@@ -19,9 +27,8 @@ export interface Draft {
   description: string | null;
   required: boolean;
   options: string[];
+  rules: DraftRule[];
 }
-
-export const ENDING_KEY = "ending";
 
 export const toDraft = (question: Question): Draft => ({
   key: String(question.id),
@@ -31,15 +38,27 @@ export const toDraft = (question: Question): Draft => ({
   description: question.description,
   required: question.required,
   options: question.options.map((option) => option.label),
+  rules: question.rules.map((rule) => ({
+    operator: rule.operator,
+    value: rule.value,
+    targetKey: rule.target_question_id === null ? ENDING_KEY : String(rule.target_question_id),
+  })),
 });
 
-export const toInput = (draft: Draft): QuestionInput => ({
+export const toInput = (draft: Draft, all: Draft[]): QuestionInput => ({
   id: draft.id,
   type: draft.type,
   title: draft.title,
   description: draft.description,
   required: draft.required,
   options: draft.options.filter((label) => label.trim()).map((label) => ({ label: label.trim() })),
+  rules: draft.rules
+    .filter((rule) => rule.targetKey === ENDING_KEY || all.some((item) => item.key === rule.targetKey))
+    .map((rule) => ({
+      operator: rule.operator,
+      value: rule.operator === "always" ? null : rule.value,
+      target_index: rule.targetKey === ENDING_KEY ? null : all.findIndex((item) => item.key === rule.targetKey),
+    })),
 });
 
 export const defaultOptions = (type: QuestionType) => (questionMeta(type).hasOptions ? ["Choice 1", "Choice 2"] : []);
@@ -51,4 +70,5 @@ export const newDraft = (type: QuestionType): Draft => ({
   description: null,
   required: false,
   options: defaultOptions(type),
+  rules: [],
 });

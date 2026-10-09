@@ -17,10 +17,12 @@ export const dynamic = "force-dynamic";
 export default async function WorkspacePage({ searchParams }: PageProps<"/forms">) {
   const [forms, { new: draftTitle }] = await Promise.all([api.listForms(), searchParams]);
   const responses = forms.reduce((total, form) => total + form.response_count, 0);
+  const starts = forms.reduce((total, form) => total + form.starts_count, 0);
+  const completed = forms.reduce((total, form) => total + form.completed_count, 0);
 
   return (
     <div className="mx-4 flex flex-1 flex-col lg:mx-6 lg:flex-row">
-      <Sidebar formCount={forms.length} responseCount={responses} draftTitle={typeof draftTitle === "string" ? draftTitle : undefined} />
+      <Sidebar formCount={forms.length} responseCount={responses} completionRate={starts ? Math.round((completed / starts) * 100) : null} draftTitle={typeof draftTitle === "string" ? draftTitle : undefined} />
       <Workspace forms={forms} />
     </div>
   );

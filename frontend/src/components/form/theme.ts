@@ -9,11 +9,13 @@
  */
 
 export const THEME = {
-  question: "#000000",
-  answer: "#0445af",
-  answerSoft: "rgba(4, 69, 175, 0.1)",
-  answerBorder: "rgba(4, 69, 175, 0.6)",
-  answerHover: "rgba(4, 69, 175, 0.3)",
+  question: "var(--tf-question)",
+  answer: "var(--tf-answer)",
+  button: "var(--tf-button)",
+  answerSoft: "color-mix(in srgb, var(--tf-answer) 10%, transparent)",
+  answerBorder: "color-mix(in srgb, var(--tf-answer) 60%, transparent)",
+  answerHover: "color-mix(in srgb, var(--tf-answer) 30%, transparent)",
+  surface: "var(--tf-bg)",
   error: "#af0404",
   errorBg: "rgba(175, 4, 4, 0.1)",
 };

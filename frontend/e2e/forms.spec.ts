@@ -61,7 +61,7 @@ test("creator builds, publishes and collects a response", async ({ page }) => {
 
   await page.goto(link);
   await expect(page.getByRole("heading", { name: /Do you like it\?/ })).toBeVisible();
-  await page.keyboard.press("y");
+  await page.getByRole("button", { name: /Yes/ }).click();
   await expect(page.getByRole("heading", { name: /What is your name\?/ })).toBeVisible();
   await page.keyboard.press("Enter");
   await expect(page.getByText("Please fill this in")).toBeVisible();
@@ -74,7 +74,7 @@ test("creator builds, publishes and collects a response", async ({ page }) => {
   await expect(row).toContainText("1");
   await row.getByText(title).click();
   await page.getByRole("link", { name: "Results" }).click();
-  await expect(page.getByText("1 response")).toBeVisible();
+  await expect(page.getByText("Submissions").locator("..")).toContainText("1");
   await expect(page.getByText("Yes").first()).toBeVisible();
   await page.getByRole("button", { name: "Responses" }).click();
   await expect(page.getByRole("cell", { name: "Playwright" })).toBeVisible();

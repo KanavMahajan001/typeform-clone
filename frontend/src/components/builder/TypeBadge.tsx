@@ -35,6 +35,7 @@ const GLYPHS: Record<QuestionType, React.ReactNode> = {
   ),
   number: <path d="M9 4 7 20M17 4l-2 16M4 9h16M3 15h16" />,
   rating: <path d="m12 3.5 2.6 5.5 6 .7-4.4 4.1 1.2 5.9L12 16.8l-5.4 2.9 1.2-5.9L3.4 9.7l6-.7Z" />,
+  file_upload: <path d="M12 16V5M7 10l5-5 5 5M5 20h14" />,
 };
 
 interface Props {

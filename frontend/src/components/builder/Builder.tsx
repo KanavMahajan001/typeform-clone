@@ -14,7 +14,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
-import type { FormDetail, QuestionType } from "@/lib/types";
+import type { FormDetail, QuestionType, Theme } from "@/lib/types";
 import { Canvas } from "./Canvas";
 import { defaultOptions, ENDING_KEY, newDraft, toDraft, toInput, type Draft } from "./draft";
 import { QuestionList } from "./QuestionList";
@@ -26,21 +26,16 @@ const SAVE_DELAY = 700;
 
 export function Builder({ form }: { form: FormDetail }) {
   const [questions, setQuestions] = useState<Draft[]>(() => form.questions.map(toDraft));
+  const [theme, setTheme] = useState<Theme>(form.theme);
   const [selectedKey, setSelectedKey] = useState<string>(questions[0]?.key ?? ENDING_KEY);
   const [status, setStatus] = useState<SaveStatus>("saved");
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
-  const persist = async (snapshot: Draft[]) => {
+  const track = async (work: Promise<unknown>) => {
     try {
-      const saved = await api.saveQuestions(form.id, snapshot.map(toInput));
-      setQuestions((current) =>
-        current.map((question) => {
-          const index = snapshot.findIndex((item) => item.key === question.key);
-          return index >= 0 && question.id === undefined ? { ...question, id: saved[index].id } : question;
-        }),
-      );
+      await work;
       setStatus("saved");
     } catch {
       setStatus("error");
@@ -48,12 +43,34 @@ export function Builder({ form }: { form: FormDetail }) {
     }
   };
 
+  const schedule = (work: () => Promise<unknown>) => {
+    setStatus("saving");
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => void track(work()), SAVE_DELAY);
+  };
+
+  const persist = async (snapshot: Draft[]) => {
+    const saved = await api.saveQuestions(
+      form.id,
+      snapshot.map((draft) => toInput(draft, snapshot)),
+    );
+    setQuestions((current) =>
+      current.map((question) => {
+        const index = snapshot.findIndex((item) => item.key === question.key);
+        return index >= 0 && question.id === undefined ? { ...question, id: saved[index].id } : question;
+      }),
+    );
+  };
+
   const update = (mutate: (current: Draft[]) => Draft[]) => {
     const next = mutate(questions);
     setQuestions(next);
-    setStatus("saving");
-    clearTimeout(timer.current);
-    timer.current = setTimeout(() => persist(next), SAVE_DELAY);
+    schedule(() => persist(next));
+  };
+
+  const updateTheme = (next: Theme) => {
+    setTheme(next);
+    schedule(() => api.updateForm(form.id, { theme: next }));
   };
 
   const add = (type: QuestionType) => {
@@ -69,7 +86,7 @@ export function Builder({ form }: { form: FormDetail }) {
     update((current) =>
       current.map((question) =>
         question.key === key
-          ? { ...question, type, options: question.options.length ? question.options : defaultOptions(type) }
+          ? { ...question, type, rules: [], options: question.options.length ? question.options : defaultOptions(type) }
           : question,
       ),
     );
@@ -96,7 +113,7 @@ export function Builder({ form }: { form: FormDetail }) {
   return (
     <div className="flex h-full">
       <div className="flex flex-1 items-center justify-center bg-admin-bg p-8 text-center lg:hidden">
-        <div className="max-w-sm rounded-2xl border border-admin-border bg-white p-8">
+        <div className="max-w-sm rounded-2xl border border-admin-border bg-admin-surface p-8">
           <p className="text-lg font-medium">The builder needs a bigger screen</p>
           <p className="mt-2 text-sm text-admin-muted">Open this form on a desktop to edit questions. Preview, Share and Results work here.</p>
         </div>
@@ -115,12 +132,16 @@ export function Builder({ form }: { form: FormDetail }) {
         index={selectedIndex}
         total={questions.length}
         status={status}
+        theme={theme}
         onChange={(changes) => selected && patch(selected.key, changes)}
       />
       <Settings
         question={selected}
+        questions={questions}
+        theme={theme}
         onChange={(changes) => selected && patch(selected.key, changes)}
         onChangeType={(type) => selected && changeType(selected.key, type)}
+        onThemeChange={updateTheme}
       />
     </div>
   );

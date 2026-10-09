@@ -28,12 +28,10 @@ export const QUESTION_TYPES: QuestionTypeMeta[] = [
   { type: "email", label: "Email", group: "Contact info", bg: "#f9d9d5", fg: "#9b3a30", hasOptions: false },
   { type: "number", label: "Number", group: "Number", bg: "#d4efe4", fg: "#1e6b4d", hasOptions: false },
   { type: "rating", label: "Rating", group: "Rating", bg: "#fbe8b4", fg: "#8a6100", hasOptions: false },
+  { type: "file_upload", label: "File upload", group: "Other", bg: "#fde0c8", fg: "#8a4a12", hasOptions: false },
 ];
 
-export const COMING_SOON_TYPES = [
-  { label: "Payment", group: "Other" },
-  { label: "File upload", group: "Other" },
-];
+export const COMING_SOON_TYPES = [{ label: "Payment", group: "Other" }];
 
 export const RATING_MAX = 5;
 
@@ -44,3 +42,17 @@ export const groupedTypes = () =>
     (groups[meta.group] ??= []).push(meta);
     return groups;
   }, {});
+
+export const choiceValues = (type: QuestionType, options: string[]): string[] | null => {
+  switch (type) {
+    case "multiple_choice":
+    case "dropdown":
+      return options;
+    case "yes_no":
+      return ["Yes", "No"];
+    case "rating":
+      return Array.from({ length: RATING_MAX }, (_, index) => String(index + 1));
+    default:
+      return null;
+  }
+};

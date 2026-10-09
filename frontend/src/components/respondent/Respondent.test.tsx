@@ -11,6 +11,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { DEFAULT_THEME } from "@/lib/theme";
 import type { PublicForm } from "@/lib/types";
 import { Respondent } from "./Respondent";
 
@@ -33,8 +34,9 @@ const stubFetch = (status: number, body: unknown) => {
 const form: PublicForm = {
   public_id: "abc12345",
   title: "Survey",
+  theme: DEFAULT_THEME,
   questions: [
-    { id: 1, type: "short_text", title: "Your name?", description: null, required: true, options: [] },
+    { id: 1, type: "short_text", title: "Your name?", description: null, required: true, options: [], rules: [] },
     {
       id: 2,
       type: "multiple_choice",
@@ -45,8 +47,9 @@ const form: PublicForm = {
         { id: 10, label: "Red" },
         { id: 11, label: "Blue" },
       ],
+      rules: [],
     },
-    { id: 3, type: "email", title: "Email?", description: null, required: false, options: [] },
+    { id: 3, type: "email", title: "Email?", description: null, required: false, options: [], rules: [] },
   ],
 };
 
@@ -76,8 +79,10 @@ describe("Respondent", () => {
     await user.click(screen.getByRole("button", { name: /Submit/ }));
     expect(await screen.findByText("Thanks for completing this typeform")).toBeInTheDocument();
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
-    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    const calls = fetchMock.mock.calls as unknown as [string, RequestInit][];
+    expect(calls[0][0]).toMatch(/\/api\/public\/forms\/abc12345\/sessions$/);
+    const [url, init] = calls[1];
     expect(url).toMatch(/\/api\/public\/forms\/abc12345\/responses$/);
     expect(JSON.parse(init.body as string)).toEqual({
       answers: [
@@ -85,6 +90,7 @@ describe("Respondent", () => {
         { question_id: 2, value: "Blue" },
         { question_id: 3, value: null },
       ],
+      session_id: 1,
     });
   });
 
@@ -116,5 +122,21 @@ describe("Respondent", () => {
     await user.type(screen.getByPlaceholderText("Type your answer here..."), "Sam{Enter}");
     expect(await screen.findByText("Thanks for completing this typeform")).toBeInTheDocument();
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("follows logic jumps and skips questions", async () => {
+    const user = userEvent.setup();
+    stubFetch(201, { id: 1, submitted_at: new Date().toISOString(), answers: [] });
+    const branching: PublicForm = {
+      ...form,
+      questions: [
+        { ...form.questions[1], rules: [{ id: 1, operator: "equals", value: "Red", target_question_id: null }] },
+        form.questions[0],
+        form.questions[2],
+      ],
+    };
+    render(<Respondent form={branching} />);
+    await user.click(screen.getByRole("button", { name: /Red/ }));
+    expect(await screen.findByRole("heading", { name: "Thanks for completing this typeform" })).toBeInTheDocument();
   });
 });

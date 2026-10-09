@@ -13,8 +13,8 @@ import type { ButtonHTMLAttributes } from "react";
 type Variant = "primary" | "secondary" | "ghost";
 
 const STYLES: Record<Variant, string> = {
-  primary: "bg-admin-text text-white hover:bg-black",
-  secondary: "border border-admin-border bg-white text-admin-text hover:bg-admin-hover",
+  primary: "bg-admin-text text-admin-surface hover:opacity-90",
+  secondary: "border border-admin-border bg-admin-surface text-admin-text hover:bg-admin-hover",
   ghost: "text-admin-text hover:bg-admin-hover",
 };
 

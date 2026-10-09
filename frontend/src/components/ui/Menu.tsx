@@ -50,7 +50,7 @@ export function Menu({ trigger, items, align = "right" }: Props) {
       </div>
       {open && (
         <div
-          className={`absolute top-full z-30 mt-1 min-w-44 rounded-lg border border-admin-border bg-white py-1 text-sm shadow-[0_4px_16px_rgba(0,0,0,0.12)] ${align === "right" ? "right-0" : "left-0"}`}
+          className={`absolute top-full z-30 mt-1 min-w-44 rounded-lg border border-admin-border bg-admin-surface py-1 text-sm shadow-[0_4px_16px_rgba(0,0,0,0.12)] ${align === "right" ? "right-0" : "left-0"}`}
         >
           {items.map((item) => (
             <button

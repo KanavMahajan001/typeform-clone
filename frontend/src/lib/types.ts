@@ -16,13 +16,33 @@ export type QuestionType =
   | "email"
   | "number"
   | "yes_no"
-  | "rating";
+  | "rating"
+  | "file_upload";
 
 export type FormStatus = "draft" | "published";
+
+export type RuleOperator = "equals" | "always";
+
+export type ThemeFont = "sans" | "serif" | "mono";
+
+export interface Theme {
+  font: ThemeFont;
+  question_color: string;
+  answer_color: string;
+  button_color: string;
+  background_color: string;
+}
 
 export interface Option {
   id: number;
   label: string;
+}
+
+export interface Rule {
+  id: number;
+  operator: RuleOperator;
+  value: string | null;
+  target_question_id: number | null;
 }
 
 export interface Question {
@@ -33,6 +53,7 @@ export interface Question {
   required: boolean;
   position: number;
   options: Option[];
+  rules: Rule[];
 }
 
 export interface FormSummary {
@@ -41,11 +62,14 @@ export interface FormSummary {
   title: string;
   status: FormStatus;
   response_count: number;
+  starts_count: number;
+  completed_count: number;
   created_at: string;
   updated_at: string;
 }
 
 export interface FormDetail extends FormSummary {
+  theme: Theme;
   questions: Question[];
 }
 
@@ -54,7 +78,14 @@ export type PublicQuestion = Omit<Question, "position">;
 export interface PublicForm {
   public_id: string;
   title: string;
+  theme: Theme;
   questions: PublicQuestion[];
+}
+
+export interface RuleInput {
+  operator: RuleOperator;
+  value: string | null;
+  target_index: number | null;
 }
 
 export interface QuestionInput {
@@ -64,6 +95,7 @@ export interface QuestionInput {
   description: string | null;
   required: boolean;
   options: { label: string }[];
+  rules: RuleInput[];
 }
 
 export type AnswerValue = string | number | boolean | null;
@@ -101,5 +133,8 @@ export interface QuestionStats {
 
 export interface FormStats {
   responses: number;
+  starts: number;
+  completed: number;
+  completion_rate: number | null;
   questions: QuestionStats[];
 }

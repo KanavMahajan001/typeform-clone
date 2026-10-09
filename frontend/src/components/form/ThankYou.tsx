@@ -11,7 +11,10 @@
 import Link from "next/link";
 import { THEME } from "./theme";
 
+const button = "mt-8 flex h-10 items-center rounded px-3.5 text-xl font-bold";
+
 export function ThankYou({ preview = false }: { preview?: boolean }) {
+  const style = { background: THEME.button, color: THEME.surface };
   return (
     <div className="flex h-full flex-col items-center justify-center px-8 text-center">
       <h1 className="text-2xl leading-8" style={{ color: THEME.question }}>
@@ -21,11 +24,11 @@ export function ThankYou({ preview = false }: { preview?: boolean }) {
         Now <em>create your own</em> — it&apos;s free, easy, &amp; beautiful
       </p>
       {preview ? (
-        <span className="mt-8 flex h-10 items-center rounded px-3.5 text-xl font-bold text-white" style={{ background: THEME.answer }}>
+        <span className={button} style={style}>
           Create a <em className="ml-1">typeform</em>
         </span>
       ) : (
-        <Link href="/" className="mt-8 flex h-10 items-center rounded px-3.5 text-xl font-bold text-white" style={{ background: THEME.answer }}>
+        <Link href="/" className={button} style={style}>
           Create a <em className="ml-1">typeform</em>
         </Link>
       )}

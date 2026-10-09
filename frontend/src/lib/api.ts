@@ -18,6 +18,7 @@ import type {
   PublicForm,
   Question,
   QuestionInput,
+  Theme,
   ValidationIssue,
 } from "./types";
 
@@ -39,7 +40,7 @@ export class ApiError extends Error {
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...init.headers },
+    headers: init.body instanceof FormData ? init.headers : { "Content-Type": "application/json", ...init.headers },
     cache: "no-store",
   });
   if (!response.ok) {
@@ -58,7 +59,7 @@ export const api = {
   listForms: () => request<FormSummary[]>("/api/forms"),
   createForm: (title: string) => request<FormDetail>("/api/forms", json("POST", { title })),
   getForm: (id: number) => request<FormDetail>(`/api/forms/${id}`),
-  updateForm: (id: number, data: { title?: string; status?: FormStatus }) =>
+  updateForm: (id: number, data: { title?: string; status?: FormStatus; theme?: Theme }) =>
     request<FormSummary>(`/api/forms/${id}`, json("PATCH", data)),
   deleteForm: (id: number) => request<void>(`/api/forms/${id}`, json("DELETE")),
   duplicateForm: (id: number) => request<FormSummary>(`/api/forms/${id}/duplicate`, json("POST")),
@@ -66,7 +67,15 @@ export const api = {
     request<Question[]>(`/api/forms/${id}/questions`, json("PUT", questions)),
   listResponses: (id: number) => request<FormResponse[]>(`/api/forms/${id}/responses`),
   getStats: (id: number) => request<FormStats>(`/api/forms/${id}/stats`),
+  csvUrl: (id: number) => `${API_URL}/api/forms/${id}/responses.csv`,
+  fileUrl: (path: string) => `${API_URL}${path}`,
   getPublicForm: (publicId: string) => request<PublicForm>(`/api/public/forms/${publicId}`),
-  submitResponse: (publicId: string, answers: AnswerInput[]) =>
-    request<FormResponse>(`/api/public/forms/${publicId}/responses`, json("POST", { answers })),
+  startSession: (publicId: string) => request<{ id: number }>(`/api/public/forms/${publicId}/sessions`, json("POST")),
+  uploadFile: (publicId: string, file: File) => {
+    const body = new FormData();
+    body.append("file", file);
+    return request<{ url: string; name: string }>(`/api/public/forms/${publicId}/uploads`, { method: "POST", body });
+  },
+  submitResponse: (publicId: string, answers: AnswerInput[], sessionId?: number) =>
+    request<FormResponse>(`/api/public/forms/${publicId}/responses`, json("POST", { answers, session_id: sessionId })),
 };

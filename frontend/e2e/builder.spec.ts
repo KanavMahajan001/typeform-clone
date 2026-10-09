@@ -78,9 +78,9 @@ test("builder supports every question type, settings, reorder, duplicate and del
   await page.getByRole("button", { name: "Thank you screen" }).click();
   await expect(page.getByRole("heading", { name: "Thanks for completing this typeform" })).toBeVisible();
   await page.getByRole("button", { name: "Design" }).click();
-  await expect(page.getByText("Themes, fonts, colors and backgrounds are coming soon.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Midnight" })).toBeVisible();
   await page.getByRole("button", { name: "Logic" }).click();
-  await expect(page.getByText("Logic jumps and conditional branching are coming soon.")).toBeVisible();
+  await expect(page.getByText("Pick a question to add logic jumps.")).toBeVisible();
 
   const saved = await (await request.get(`${API}/forms/${id}`)).json();
   expect(saved.questions.map((question: { type: string }) => question.type)).toEqual([
@@ -135,7 +135,7 @@ test("results show summary stats and response details", async ({ page, request }
   const forms = await (await request.get(`${API}/forms`)).json();
   const feedback = forms.find((form: { title: string }) => form.title === "Customer Feedback Survey");
   await page.goto(`/forms/${feedback.id}/results`);
-  await expect(page.getByText(/\d+ responses/)).toBeVisible();
+  await expect(page.getByText("Submissions")).toBeVisible();
   await expect(page.getByText("Search engine")).toBeVisible();
   await expect(page.getByText("average")).toBeVisible();
   await page.getByRole("button", { name: "Responses" }).click();

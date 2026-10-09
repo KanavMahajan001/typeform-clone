@@ -18,6 +18,7 @@ import { api } from "@/lib/api";
 import type { FormSummary } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 import { CheckIcon, ChevronLeftIcon, EyeIcon } from "@/components/ui/Icons";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 const TABS = ["create", "connect", "share", "results"] as const;
 
@@ -47,7 +48,7 @@ export function FormShell({ form, children }: { form: FormSummary; children: Rea
   };
 
   return (
-    <div className="flex h-screen flex-col bg-white text-admin-text">
+    <div className="flex h-screen flex-col bg-admin-surface text-admin-text">
       <header className="flex flex-none flex-wrap items-center border-b border-admin-border px-4 lg:grid lg:h-14 lg:grid-cols-[1fr_auto_1fr]">
         <div className="flex h-14 min-w-0 flex-1 items-center gap-1 text-sm lg:flex-none">
           <Link href="/forms" aria-label="Back to workspace" className="rounded-md p-1 hover:bg-admin-hover">
@@ -82,6 +83,7 @@ export function FormShell({ form, children }: { form: FormSummary; children: Rea
           })}
         </nav>
         <div className="flex items-center justify-end gap-2">
+          <ThemeToggle />
           <Link href={`${base}/preview`} target="_blank" aria-label="Preview" className="rounded-md p-2 hover:bg-admin-hover">
             <EyeIcon width={18} height={18} />
           </Link>

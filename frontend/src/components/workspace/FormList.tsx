@@ -130,13 +130,13 @@ export function FormList({ forms, view }: { forms: FormSummary[]; view: View }) 
     />
   );
 
-  const integrations = (
+  const integrations = (form: FormSummary) => (
     <button
       type="button"
       aria-label="Integrations"
       onClick={(event) => {
         event.stopPropagation();
-        toast("Integrations are coming soon");
+        router.push(`/forms/${form.id}/connect`);
       }}
       className="rounded-md border border-admin-border p-1.5 text-admin-muted hover:bg-admin-hover"
     >
@@ -204,9 +204,9 @@ export function FormList({ forms, view }: { forms: FormSummary[]; view: View }) 
               <StatusPill status={form.status} />
             </span>
             <span className="hidden lg:block">{form.response_count || "-"}</span>
-            <span className="hidden lg:block">{form.response_count ? "100%" : "-"}</span>
+            <span className="hidden lg:block">{form.starts_count ? `${Math.round((form.completed_count / form.starts_count) * 100)}%` : "-"}</span>
             <span className="hidden lg:block">{formatDay(form.updated_at)}</span>
-            <span className="hidden lg:block">{integrations}</span>
+            <span className="hidden lg:block">{integrations(form)}</span>
             {menu(form)}
           </li>
         ))}

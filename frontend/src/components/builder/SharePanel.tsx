@@ -43,7 +43,7 @@ export function SharePanel({ form }: { form: FormSummary }) {
       <div className="w-full max-w-xl">
         <h1 className="text-2xl font-medium">Share your form</h1>
         <p className="mt-1 text-sm text-admin-muted">Anyone with the link can fill out your form. No login required.</p>
-        <div className="mt-6 rounded-2xl border border-admin-border bg-white p-6">
+        <div className="mt-6 rounded-2xl border border-admin-border bg-admin-surface p-6">
           <p className="mb-2 flex items-center gap-2 text-sm font-medium">
             <LinkIcon />
             Link
@@ -62,7 +62,7 @@ export function SharePanel({ form }: { form: FormSummary }) {
           </div>
           {!published && <p className="mt-3 text-sm text-admin-muted">Publish your form to activate this link.</p>}
         </div>
-        <div className="mt-4 rounded-2xl border border-admin-border bg-white px-6 py-4">
+        <div className="mt-4 rounded-2xl border border-admin-border bg-admin-surface px-6 py-4">
           <Toggle label="Published" checked={published} onChange={setPublished} />
           <p className="text-sm text-admin-muted">
             {published ? "Your form is accepting responses." : "Your form is a draft and isn't accepting responses."}

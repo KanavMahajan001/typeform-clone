@@ -41,3 +41,5 @@ export const pluralize = (count: number, noun: string) => `${count} ${noun}${cou
 
 export const formatDay = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
+
+export const fileName = (url: string) => (url.split("/").pop() ?? url).replace(/^[0-9a-f]{16}-/, "");

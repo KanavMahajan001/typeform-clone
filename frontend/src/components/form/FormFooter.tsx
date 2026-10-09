@@ -22,23 +22,23 @@ interface Props {
 export function FormFooter({ onPrev, onNext, canPrev, canNext }: Props) {
   return (
     <div className="absolute bottom-4 right-4 flex items-center gap-2">
-      <div className="flex overflow-hidden rounded" style={{ background: THEME.answer }}>
+      <div className="flex overflow-hidden rounded" style={{ background: THEME.button, color: THEME.surface }}>
         <button
           type="button"
           aria-label="Previous question"
           disabled={!canPrev}
           onClick={onPrev}
-          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:bg-black/10 disabled:opacity-40"
+          className="flex h-8 w-8 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40"
         >
           <ArrowUpIcon />
         </button>
-        <span className="my-1.5 w-px bg-white/30" />
+        <span className="my-1.5 w-px bg-current opacity-30" />
         <button
           type="button"
           aria-label="Next question"
           disabled={!canNext}
           onClick={onNext}
-          className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:bg-black/10 disabled:opacity-40"
+          className="flex h-8 w-8 items-center justify-center transition-opacity hover:opacity-80 disabled:opacity-40"
         >
           <ArrowDownIcon />
         </button>

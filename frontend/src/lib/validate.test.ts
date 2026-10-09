@@ -19,6 +19,7 @@ const question = (overrides: Partial<PublicQuestion>): PublicQuestion => ({
   description: null,
   required: true,
   options: [],
+  rules: [],
   ...overrides,
 });
 

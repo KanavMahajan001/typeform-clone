@@ -36,7 +36,7 @@ export function Modal({ open, onClose, title, children, width = "max-w-md" }: Pr
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative w-full ${width} rounded-2xl bg-white p-8 text-admin-text shadow-[0_8px_30px_rgba(0,0,0,0.2)]`}
+        className={`relative w-full ${width} rounded-2xl bg-admin-surface p-8 text-admin-text shadow-[0_8px_30px_rgba(0,0,0,0.2)]`}
         onMouseDown={(event) => event.stopPropagation()}
       >
         <button

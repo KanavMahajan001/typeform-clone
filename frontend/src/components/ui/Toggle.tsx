@@ -28,7 +28,7 @@ export function Toggle({ checked, onChange, label }: Props) {
         className={`relative h-5 w-9 flex-none rounded-full transition-colors ${checked ? "bg-admin-text" : "bg-ink-300"}`}
       >
         <span
-          className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-4" : "translate-x-0.5"}`}
+          className={`absolute top-0.5 h-4 w-4 rounded-full bg-admin-surface shadow transition-transform ${checked ? "translate-x-4" : "translate-x-0.5"}`}
         />
       </button>
     </label>

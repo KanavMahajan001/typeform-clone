@@ -23,8 +23,8 @@ export function OkButton({ label = "OK", hint = "press Enter ↵", onClick }: Pr
       <button
         type="button"
         onClick={onClick}
-        className="flex h-10 items-center gap-2 rounded px-3.5 text-xl font-bold text-white transition-opacity hover:opacity-90"
-        style={{ background: THEME.answer }}
+        className="flex h-10 items-center gap-2 rounded px-3.5 text-xl font-bold transition-opacity hover:opacity-90"
+        style={{ background: THEME.button, color: THEME.surface }}
       >
         {label}
         <CheckIcon width={18} height={18} />

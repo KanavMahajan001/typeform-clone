@@ -11,10 +11,13 @@
 "use client";
 
 import { useState } from "react";
+import { fileName } from "@/lib/format";
 import { RATING_MAX } from "@/lib/questions";
 import type { AnswerValue, QuestionType } from "@/lib/types";
-import { CheckIcon, StarIcon } from "@/components/ui/Icons";
+import { CheckIcon, StarIcon, UploadIcon } from "@/components/ui/Icons";
 import { OPTION_KEYS, THEME } from "./theme";
+
+export type Uploader = (file: File) => Promise<{ url: string }>;
 
 interface Props {
   type: QuestionType;
@@ -23,6 +26,7 @@ interface Props {
   onChange: (value: AnswerValue) => void;
   onSubmit?: (value?: AnswerValue) => void;
   autoFocus?: boolean;
+  upload?: Uploader;
 }
 
 const PLACEHOLDERS: Partial<Record<QuestionType, string>> = {
@@ -56,8 +60,8 @@ export function OptionButton({
         className="flex h-6 w-6 flex-none items-center justify-center rounded-sm border text-xs font-bold"
         style={{
           borderColor: THEME.answerBorder,
-          background: selected ? THEME.answer : "#fff",
-          color: selected ? "#fff" : THEME.answer,
+          background: selected ? THEME.answer : THEME.surface,
+          color: selected ? THEME.surface : THEME.answer,
         }}
       >
         {hotkey}
@@ -145,7 +149,10 @@ function Dropdown(props: Props) {
     <div onFocus={() => setOpen(true)} onBlur={(event) => !event.currentTarget.contains(event.relatedTarget) && setOpen(false)}>
       <TextInput {...props} type="dropdown" />
       {open && matches.length > 0 && (
-        <ul className="mt-2 max-h-64 overflow-auto rounded border bg-white py-1 shadow-sm" style={{ borderColor: THEME.answerBorder }}>
+        <ul
+          className="mt-2 max-h-64 overflow-auto rounded border py-1 shadow-sm"
+          style={{ borderColor: THEME.answerBorder, background: THEME.surface }}
+        >
           {matches.map((option) => (
             <li key={option}>
               <button
@@ -156,7 +163,7 @@ function Dropdown(props: Props) {
                   setOpen(false);
                   props.onSubmit?.(option);
                 }}
-                className="w-full px-3 py-2 text-left text-xl transition-colors hover:bg-[rgba(4,69,175,0.1)]"
+                className="w-full px-3 py-2 text-left text-xl transition-colors hover:brightness-95"
                 style={{ color: THEME.answer }}
               >
                 {option}
@@ -217,6 +224,41 @@ function Rating({ value, onChange, onSubmit }: Props) {
   );
 }
 
+function FileUpload({ value, onChange, upload }: Props) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const pick = async (file?: File) => {
+    if (!file || !upload) return;
+    setBusy(true);
+    setError(null);
+    try {
+      onChange((await upload(file)).url);
+    } catch {
+      setError("Upload failed. Please try a smaller file.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <label
+      className="flex max-w-md cursor-pointer flex-col items-center justify-center gap-2 rounded border border-dashed px-6 py-10 text-center"
+      style={{ borderColor: THEME.answerBorder, background: THEME.answerSoft, color: THEME.answer }}
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={(event) => {
+        event.preventDefault();
+        void pick(event.dataTransfer.files[0]);
+      }}
+    >
+      <input type="file" className="sr-only" disabled={!upload} onChange={(event) => void pick(event.target.files?.[0])} />
+      <UploadIcon width={32} height={32} />
+      <span className="text-xl">{busy ? "Uploading…" : value ? fileName(String(value)) : "Choose file or drag here"}</span>
+      <span className="text-sm opacity-70">{error ?? "Size limit: 10MB"}</span>
+    </label>
+  );
+}
+
 export function QuestionField(props: Props) {
   switch (props.type) {
     case "long_text":
@@ -229,6 +271,8 @@ export function QuestionField(props: Props) {
       return <YesNo {...props} />;
     case "rating":
       return <Rating {...props} />;
+    case "file_upload":
+      return <FileUpload {...props} />;
     default:
       return <TextInput {...props} type={props.type} />;
   }

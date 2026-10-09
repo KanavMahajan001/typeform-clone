@@ -10,9 +10,9 @@
 
 "use client";
 
-import { useState } from "react";
 import { questionMeta } from "@/lib/questions";
-import type { AnswerValue } from "@/lib/types";
+import { themeStyle } from "@/lib/theme";
+import type { Theme } from "@/lib/types";
 import { FormFooter } from "@/components/form/FormFooter";
 import { OkButton } from "@/components/form/OkButton";
 import { QuestionNumber } from "@/components/form/QuestionHeader";
@@ -72,7 +72,10 @@ function OptionEditor({ options, onChange }: { options: string[]; onChange: (opt
           className="group flex min-h-10 min-w-[12.5rem] items-center gap-3 rounded border px-2 py-1 text-xl"
           style={{ color: THEME.answer, borderColor: THEME.answerBorder, background: THEME.answerSoft }}
         >
-          <span className="flex h-6 w-6 items-center justify-center rounded-sm border bg-white text-xs font-bold" style={{ borderColor: THEME.answerBorder }}>
+          <span
+            className="flex h-6 w-6 items-center justify-center rounded-sm border text-xs font-bold"
+            style={{ borderColor: THEME.answerBorder, background: THEME.surface }}
+          >
             {OPTION_KEYS[index]}
           </span>
           <input
@@ -109,20 +112,19 @@ interface Props {
   index: number;
   total: number;
   status: SaveStatus;
+  theme: Theme;
   onChange: (changes: Partial<Draft>) => void;
 }
 
-function AnswerPreview({ question }: { question: Draft }) {
-  const [value, setValue] = useState<AnswerValue>(null);
-  return <QuestionField key={question.key} type={question.type} options={[]} value={value} onChange={setValue} />;
-}
-
-export function Canvas({ question, index, total, status, onChange }: Props) {
+export function Canvas({ question, index, total, status, theme, onChange }: Props) {
   return (
     <section className="hidden min-w-0 flex-1 flex-col bg-admin-bg lg:flex">
       <div className="flex h-10 items-center justify-end px-4 text-xs text-admin-muted">{STATUS_TEXT[status]}</div>
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto px-8 pb-8">
-        <div className="relative aspect-[16/10] w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
+        <div
+          className="relative aspect-[16/10] w-full max-w-4xl overflow-hidden rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
+          style={themeStyle(theme)}
+        >
           {question ? (
             <div className="flex h-full items-center px-16">
               <div className="flex w-full max-w-2xl gap-3">
@@ -151,7 +153,9 @@ export function Canvas({ question, index, total, status, onChange }: Props) {
                   {questionMeta(question.type).hasOptions ? (
                     <OptionEditor options={question.options} onChange={(options) => onChange({ options })} />
                   ) : (
-                    <AnswerPreview question={question} />
+                    <div className="pointer-events-none select-none">
+                      <QuestionField type={question.type} options={[]} value={null} onChange={() => {}} />
+                    </div>
                   )}
                   <OkButton label={index === total - 1 ? "Submit" : "OK"} />
                 </div>

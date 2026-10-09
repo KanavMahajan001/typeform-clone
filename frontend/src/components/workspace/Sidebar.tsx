@@ -12,20 +12,18 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { ChevronUpIcon, LayersIcon, PlusIcon, SearchIcon } from "@/components/ui/Icons";
 import { CreateFormModal } from "./CreateFormModal";
 
-const RESPONSE_LIMIT = 10;
-
 interface Props {
   formCount: number;
   responseCount: number;
+  completionRate: number | null;
   draftTitle?: string;
 }
 
-export function Sidebar({ formCount, responseCount, draftTitle }: Props) {
+export function Sidebar({ formCount, responseCount, completionRate, draftTitle }: Props) {
   const router = useRouter();
   const [creating, setCreating] = useState(draftTitle !== undefined);
   const [expanded, setExpanded] = useState(true);
@@ -53,15 +51,6 @@ export function Sidebar({ formCount, responseCount, draftTitle }: Props) {
             <LayersIcon width={18} height={18} />
             Workspaces
           </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            aria-label="Add workspace"
-            className="px-2"
-            onClick={() => toast("Multiple workspaces are coming soon")}
-          >
-            <PlusIcon />
-          </Button>
         </div>
         <button
           type="button"
@@ -80,19 +69,11 @@ export function Sidebar({ formCount, responseCount, draftTitle }: Props) {
       </nav>
       <div className="mt-auto hidden border-t border-admin-border p-5 text-base lg:block">
         <p>Responses collected</p>
+        <p className="mt-1 text-3xl font-medium">{responseCount}</p>
         <div className="mt-3 h-1 rounded-full bg-admin-border">
-          <div
-            className="h-full rounded-full bg-admin-text"
-            style={{ width: `${Math.min(100, (responseCount / RESPONSE_LIMIT) * 100)}%` }}
-          />
+          <div className="h-full rounded-full bg-admin-text" style={{ width: `${completionRate ?? 0}%` }} />
         </div>
-        <p className="mt-3">
-          <strong className="font-medium">{responseCount}</strong>
-          <span className="text-sm text-admin-muted"> / {RESPONSE_LIMIT}</span>
-        </p>
-        <Button variant="secondary" className="mt-4" onClick={() => toast("Plans and billing are coming soon")}>
-          Increase response limit
-        </Button>
+        <p className="mt-2 text-sm text-admin-muted">{completionRate === null ? "No starts yet" : `${completionRate}% completion rate`}</p>
       </div>
       <CreateFormModal open={creating} initialTitle={draftTitle} onClose={closeCreate} />
     </aside>
