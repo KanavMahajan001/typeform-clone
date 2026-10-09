@@ -56,17 +56,17 @@ export function Hero() {
     <section className="bg-ink pt-8 text-ink-25">
       <div className="container-site flex flex-col gap-12">
         <div className="flex flex-col items-center gap-5 text-center">
-          <p className="eyebrow text-purple-400">AI forms &amp; automation</p>
-          <h1 className="heading-display">
+          <p className="rise eyebrow text-purple-400">AI forms &amp; automation</p>
+          <h1 className="rise heading-display" style={{ animationDelay: "0.1s" }}>
             Your favorite forms.
             <br />
             Now with AI automation.
           </h1>
-          <p className="body-md max-w-[52rem]">
+          <p className="rise body-md max-w-[52rem]" style={{ animationDelay: "0.2s" }}>
             Combine AI forms and automated workflows to drive revenue growth. Run in-depth research and manage the
             entire customer lifecycle. All in Typeform.
           </p>
-          <Link href="/forms" className="btn btn-light mt-1">
+          <Link href="/signup" className="rise btn btn-light mt-1" style={{ animationDelay: "0.3s" }}>
             Get started—it’s free
           </Link>
         </div>
