@@ -85,6 +85,12 @@ export function Builder({ form }: { form: FormDetail }) {
 
   return (
     <div className="flex h-full">
+      <div className="flex flex-1 items-center justify-center bg-admin-bg p-8 text-center lg:hidden">
+        <div className="max-w-sm rounded-2xl border border-admin-border bg-white p-8">
+          <p className="text-lg font-medium">The builder needs a bigger screen</p>
+          <p className="mt-2 text-sm text-admin-muted">Open this form on a desktop to edit questions. Preview, Share and Results work here.</p>
+        </div>
+      </div>
       <QuestionList
         questions={questions}
         selectedKey={selectedKey}

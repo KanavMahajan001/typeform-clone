@@ -27,7 +27,7 @@ const TABS: { label: string; icon: ReactNode; badge?: ReactNode; divider?: boole
 
 export function SectionTabs() {
   return (
-    <nav className="mx-6 mt-6 flex items-center border-b border-admin-border">
+    <nav className="mx-4 mt-6 flex items-center overflow-x-auto border-b border-admin-border lg:mx-6">
       {TABS.map(({ label, icon, badge, divider }) => {
         const active = label === "Forms";
         return (
@@ -36,7 +36,7 @@ export function SectionTabs() {
             <button
               type="button"
               onClick={() => !active && toast(`${label} is coming soon`)}
-              className={`relative flex h-12 items-center gap-2 rounded-t-lg px-4 text-base ${active ? "bg-admin-bg font-medium" : "hover:bg-admin-hover"}`}
+              className={`relative flex h-12 items-center gap-2 whitespace-nowrap rounded-t-lg px-4 text-base ${active ? "bg-admin-bg font-medium" : "hover:bg-admin-hover"}`}
             >
               {icon}
               {label}

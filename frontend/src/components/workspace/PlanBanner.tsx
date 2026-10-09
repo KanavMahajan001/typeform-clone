@@ -9,7 +9,7 @@ export function PlanBanner() {
   if (!open) return null;
 
   return (
-    <div className="relative mx-6 flex h-16 items-center justify-center gap-4 rounded-lg border border-[#c9dfd4] bg-[#f4faf7] text-base">
+    <div className="relative mx-4 flex min-h-16 flex-wrap items-center justify-center gap-4 rounded-lg border border-[#c9dfd4] bg-[#f4faf7] px-12 py-3 text-sm lg:mx-6 lg:text-base">
       <GemIcon width={22} height={22} className="text-admin-muted" />
       <p>
         You can collect <strong className="font-medium">10 form responses</strong> this month for free.

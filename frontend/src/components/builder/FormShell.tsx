@@ -38,8 +38,8 @@ export function FormShell({ form, children }: { form: FormSummary; children: Rea
 
   return (
     <div className="flex h-screen flex-col bg-white text-admin-text">
-      <header className="grid h-14 flex-none grid-cols-[1fr_auto_1fr] items-center border-b border-admin-border px-4">
-        <div className="flex min-w-0 items-center gap-1 text-sm">
+      <header className="flex flex-none flex-wrap items-center border-b border-admin-border px-4 lg:grid lg:h-14 lg:grid-cols-[1fr_auto_1fr]">
+        <div className="flex h-14 min-w-0 flex-1 items-center gap-1 text-sm lg:flex-none">
           <Link href="/forms" aria-label="Back to workspace" className="rounded-md p-1 hover:bg-admin-hover">
             <ChevronLeftIcon width={18} height={18} />
           </Link>
@@ -56,7 +56,7 @@ export function FormShell({ form, children }: { form: FormSummary; children: Rea
             className="min-w-0 flex-1 rounded-md px-2 py-1 font-medium outline-none hover:bg-admin-hover focus:bg-admin-hover"
           />
         </div>
-        <nav className="flex h-14 items-center gap-2">
+        <nav className="order-last flex h-14 w-full items-center gap-2 overflow-x-auto lg:order-none lg:w-auto">
           {TABS.map((tab) => {
             const active = pathname.startsWith(`${base}/${tab}`);
             return (

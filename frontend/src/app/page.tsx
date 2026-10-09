@@ -40,7 +40,7 @@ export default function HomePage() {
             },
           ]}
         />
-        <section className="bg-ink pt-[7.5rem] text-center text-ink-25">
+        <section className="bg-ink pt-16 text-center text-ink-25 lg:pt-[7.5rem]">
           <div className="container-site">
             <h2 className="heading-two">
               When the form ends,

@@ -23,7 +23,7 @@ interface Props {
 
 export function WorkspaceHeader({ sort, view, onSort, onView }: Props) {
   return (
-    <div className="mb-8 flex items-center justify-between border-b border-admin-border pb-6">
+    <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-admin-border pb-6">
       <div className="flex items-center gap-3">
         <h1 className="text-3xl font-light">My workspace</h1>
         <Button variant="ghost" aria-label="Workspace options" className="px-2" onClick={() => toast("Workspace settings are coming soon")}>

@@ -23,7 +23,7 @@ interface Props {
 
 export function TextMedia({ id, eyebrow, title, text, cta, href, video, poster, features, isNew, dark, mediaLeft }: Props) {
   return (
-    <section id={id} className={`scroll-mt-[5.5rem] py-[7.5rem] ${dark ? "bg-ink text-ink-25" : "bg-ink-25 text-ink"}`}>
+    <section id={id} className={`scroll-mt-[5.5rem] py-16 lg:py-[7.5rem] ${dark ? "bg-ink text-ink-25" : "bg-ink-25 text-ink"}`}>
       <div className="container-10 flex flex-col gap-12">
         <div className={`flex flex-col items-center justify-between gap-8 lg:flex-row ${mediaLeft ? "lg:flex-row-reverse" : ""}`}>
           <div className="flex w-full max-w-[29.69rem] flex-col gap-10 lg:w-2/5">

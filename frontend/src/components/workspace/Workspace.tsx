@@ -13,7 +13,7 @@ export function Workspace({ forms }: { forms: FormSummary[] }) {
   const [view, setView] = useState<View>("list");
 
   return (
-    <section className="flex-1 px-12 py-10">
+    <section className="flex-1 py-6 lg:px-12 lg:py-10">
       <WorkspaceHeader sort={sort} view={view} onSort={setSort} onView={setView} />
       <FormList forms={[...forms].sort(compare(sort))} view={view} />
     </section>

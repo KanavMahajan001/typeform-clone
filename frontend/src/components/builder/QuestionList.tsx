@@ -96,7 +96,7 @@ export function QuestionList({ questions, selectedKey, onSelect, onAdd, onMove, 
   };
 
   return (
-    <aside className="flex w-80 flex-none flex-col border-r border-admin-border">
+    <aside className="hidden w-80 flex-none flex-col border-r border-admin-border lg:flex">
       <div className="flex items-center justify-between px-4 py-3">
         <h2 className="text-sm font-medium">Content</h2>
         <Button size="sm" onClick={() => setAdding(true)}>

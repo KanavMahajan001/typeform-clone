@@ -35,7 +35,7 @@ export function Settings({ question, onChange, onChangeType }: Props) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Question");
 
   return (
-    <aside className="flex w-80 flex-none flex-col border-l border-admin-border">
+    <aside className="hidden w-80 flex-none flex-col border-l border-admin-border lg:flex">
       <div className="flex border-b border-admin-border">
         {TABS.map((item) => (
           <button

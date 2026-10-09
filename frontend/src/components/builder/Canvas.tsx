@@ -103,7 +103,7 @@ export function Canvas({ question, index, total, status, onChange }: Props) {
   const [value, setValue] = useState<AnswerValue>(null);
 
   return (
-    <section className="flex min-w-0 flex-1 flex-col bg-admin-bg">
+    <section className="hidden min-w-0 flex-1 flex-col bg-admin-bg lg:flex">
       <div className="flex h-10 items-center justify-end px-4 text-xs text-admin-muted">{STATUS_TEXT[status]}</div>
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto px-8 pb-8">
         <div className="relative aspect-[16/10] w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.08)]">

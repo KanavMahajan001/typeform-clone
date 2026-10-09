@@ -26,18 +26,18 @@ export function Sidebar({ formCount, responseCount, draftTitle }: Props) {
   };
 
   return (
-    <aside className="flex w-80 flex-none flex-col bg-admin-bg">
+    <aside className="flex w-full flex-none flex-col bg-admin-bg lg:w-80">
       <div className="p-5">
         <Button className="h-11 w-full text-base" onClick={() => setCreating(true)}>
           <PlusIcon width={18} height={18} />
           Create form
         </Button>
       </div>
-      <label className="flex h-14 items-center gap-3 border-y border-admin-border px-7 text-base text-admin-muted">
+      <label className="hidden h-14 lg:flex items-center gap-3 border-y border-admin-border px-7 text-base text-admin-muted">
         <SearchIcon width={18} height={18} />
         <input placeholder="Search" className="w-full bg-transparent outline-none placeholder:text-admin-muted" />
       </label>
-      <nav className="flex flex-col gap-1 p-5 text-base">
+      <nav className="hidden flex-col gap-1 p-5 text-base lg:flex">
         <div className="flex items-center justify-between px-2 py-1">
           <span className="flex items-center gap-2 font-medium">
             <LayersIcon width={18} height={18} />
@@ -68,7 +68,7 @@ export function Sidebar({ formCount, responseCount, draftTitle }: Props) {
           </span>
         )}
       </nav>
-      <div className="mt-auto border-t border-admin-border p-5 text-base">
+      <div className="mt-auto hidden border-t border-admin-border p-5 text-base lg:block">
         <p>Responses collected</p>
         <div className="mt-3 h-1 rounded-full bg-admin-border">
           <div

@@ -23,7 +23,7 @@ export function SocialProof() {
   return (
     <section className="overflow-hidden bg-ink-25 pt-20 text-ink">
       <div className="container-site flex flex-col items-center gap-6 pb-6">
-        <div className="flex min-h-[30rem] w-full flex-col gap-4 lg:flex-row lg:gap-0">
+        <div className="flex w-full flex-col lg:min-h-[30rem] lg:flex-row">
           {window.map((slide, offset) => {
             const isActive = offset === 0;
             return (
@@ -31,14 +31,14 @@ export function SocialProof() {
                 key={slide.text}
                 type="button"
                 onClick={() => setActive((active + offset) % STORIES.length)}
-                className={`relative overflow-hidden rounded-media bg-ink-100 text-left transition-[width,background-color] duration-300 hover:bg-[#eccffa85] ${isActive ? "lg:w-[52%]" : "lg:w-[24%]"}`}
+                className={`relative overflow-hidden rounded-media bg-ink-100 text-left transition-[width,background-color] duration-300 hover:bg-[#eccffa85] ${isActive ? "lg:w-[52%]" : "hidden lg:block lg:w-[24%]"}`}
               >
                 <img src="/images/bg-shine.avif" alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
                 <div className="relative z-10 flex h-full flex-col gap-[3.38rem] px-8 py-10">
                   <div className="flex h-[2.8rem] max-w-[9.06rem] items-center">
                     <img src={slide.logo} alt="" className="h-full object-contain" />
                   </div>
-                  <p className={`font-serif leading-none ${isActive ? "text-[3.75rem] tracking-[-1.75px]" : "text-[1.75rem]"}`}>
+                  <p className={`font-serif leading-none ${isActive ? "text-[2rem] lg:text-[3.75rem] lg:tracking-[-1.75px]" : "text-[1.75rem]"}`}>
                     {slide.text}
                   </p>
                 </div>

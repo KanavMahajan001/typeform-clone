@@ -12,7 +12,7 @@ import { Menu } from "@/components/ui/Menu";
 import { Modal } from "@/components/ui/Modal";
 import type { View } from "./WorkspaceHeader";
 
-const COLUMNS = "grid-cols-[1fr_7rem_7rem_8rem_7rem_3rem]";
+const COLUMNS = "grid-cols-[1fr_3rem] lg:grid-cols-[1fr_7rem_7rem_8rem_7rem_3rem]";
 
 function RenameModal({ form, onClose }: { form: FormSummary | null; onClose: () => void }) {
   const router = useRouter();
@@ -176,10 +176,10 @@ export function FormList({ forms, view }: { forms: FormSummary[]; view: View }) 
     <>
       <div className={`grid ${COLUMNS} items-center px-4 pb-3 text-base text-admin-muted`}>
         <span />
-        <span>Responses</span>
-        <span>Completed</span>
-        <span>Updated</span>
-        <span>Integrations</span>
+        <span className="hidden lg:block">Responses</span>
+        <span className="hidden lg:block">Completed</span>
+        <span className="hidden lg:block">Updated</span>
+        <span className="hidden lg:block">Integrations</span>
       </div>
       <ul className="divide-y divide-admin-border rounded-xl border border-admin-border">
         {forms.map((form) => (
@@ -193,10 +193,10 @@ export function FormList({ forms, view }: { forms: FormSummary[]; view: View }) 
               <span className="truncate font-medium">{form.title}</span>
               <StatusPill status={form.status} />
             </span>
-            <span>{form.response_count || "-"}</span>
-            <span>{form.response_count ? "100%" : "-"}</span>
-            <span>{formatDay(form.updated_at)}</span>
-            <span>{integrations}</span>
+            <span className="hidden lg:block">{form.response_count || "-"}</span>
+            <span className="hidden lg:block">{form.response_count ? "100%" : "-"}</span>
+            <span className="hidden lg:block">{formatDay(form.updated_at)}</span>
+            <span className="hidden lg:block">{integrations}</span>
             {menu(form)}
           </li>
         ))}

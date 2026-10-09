@@ -9,7 +9,7 @@ const soon = (feature: string) => () => comingSoon(feature);
 
 export function TopBar() {
   return (
-    <header className="flex h-16 items-center justify-between px-6">
+    <header className="flex h-16 items-center justify-between px-4 lg:px-6">
       <div className="flex items-center gap-3">
         <LogoIcon className="h-5 w-9" />
         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#5c8fd6] text-lg font-medium text-white">K</span>
@@ -19,6 +19,7 @@ export function TopBar() {
         </button>
       </div>
       <div className="flex items-center gap-1">
+        <div className="hidden items-center gap-1 md:flex">
         <Button variant="ghost" onClick={soon("Integrations")}>
           <IntegrationsIcon width={18} height={18} />
           Integrations
@@ -27,6 +28,7 @@ export function TopBar() {
           <BrushIcon width={18} height={18} />
           Brand kit
         </Button>
+        </div>
         <Button variant="ghost" aria-label="Help" onClick={soon("Help center")} className="px-2">
           <HelpIcon width={20} height={20} />
         </Button>

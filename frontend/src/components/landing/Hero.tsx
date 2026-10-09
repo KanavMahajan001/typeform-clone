@@ -72,7 +72,7 @@ export function Hero() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="-mx-[var(--section-margin)] flex gap-3 overflow-x-auto px-[var(--section-margin)] lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-4 lg:px-0">
             {TABS.map((tab, index) => {
               const isActive = index === active;
               return (
@@ -80,7 +80,7 @@ export function Hero() {
                   key={tab.title}
                   type="button"
                   onClick={() => select(index)}
-                  className="group relative rounded-[calc(0.75rem+0.5px)] p-px text-left transition-all duration-300"
+                  className="group relative w-[68%] flex-none rounded-[calc(0.75rem+0.5px)] p-px text-left transition-all duration-300 sm:w-[45%] lg:w-auto"
                   style={{
                     backgroundImage: isActive
                       ? "linear-gradient(110deg,#e47cff,#fffeff 50%,#e47cff)"
@@ -94,12 +94,12 @@ export function Hero() {
                       <div className="flex items-center gap-2 text-2xl leading-[1.15]">
                         {tab.title}
                         {tab.isNew && (
-                          <span className="tag-new">
+                          <span className="tag-new hidden lg:inline-flex">
                             <span>New</span>
                           </span>
                         )}
                       </div>
-                      <p className="hidden text-base md:block">{tab.text}</p>
+                      <p className="hidden text-base lg:block">{tab.text}</p>
                     </div>
                     <div className={`mt-auto h-1 w-full overflow-hidden rounded-full bg-ink-900 ${isActive ? "" : "invisible"}`}>
                       {isActive && <div ref={bar} className="h-full w-full origin-left scale-x-0 rounded-full bg-purple-500" />}
@@ -110,7 +110,7 @@ export function Hero() {
             })}
           </div>
 
-          <div className="relative aspect-[2/1] w-full overflow-hidden rounded-media">
+          <div className="relative -mx-[var(--section-margin)] aspect-[2/1] overflow-hidden lg:mx-0 lg:rounded-media">
             {TABS.map((tab, index) => (
               <video
                 key={tab.video}
@@ -127,6 +127,7 @@ export function Hero() {
               />
             ))}
           </div>
+          <p className="text-base lg:hidden">{TABS[active].text}</p>
         </div>
       </div>
       <div className="bg-ink-25">

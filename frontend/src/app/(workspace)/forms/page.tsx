@@ -9,7 +9,7 @@ export default async function WorkspacePage({ searchParams }: PageProps<"/forms"
   const responses = forms.reduce((total, form) => total + form.response_count, 0);
 
   return (
-    <div className="mx-6 flex flex-1">
+    <div className="mx-4 flex flex-1 flex-col lg:mx-6 lg:flex-row">
       <Sidebar formCount={forms.length} responseCount={responses} draftTitle={typeof draftTitle === "string" ? draftTitle : undefined} />
       <Workspace forms={forms} />
     </div>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { CloseIcon } from "@/components/ui/Icons";
 import { Logo } from "./Logo";
 import { NavLink } from "./NavLink";
 import { NAV_MENUS, RESEARCH_FEATURE, type NavColumn } from "./nav-data";
@@ -77,12 +78,55 @@ function Column({ column, last }: { column: NavColumn; last: boolean }) {
   );
 }
 
+function MobileMenu({ onClose }: { onClose: () => void }) {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 top-[4.5rem] z-40 flex flex-col overflow-y-auto bg-ink lg:hidden">
+      <ul className="container-site flex flex-col py-8">
+        {NAV_MENUS.map((menu) => {
+          const isOpen = expanded === menu.label;
+          return (
+            <li key={menu.label}>
+              <button
+                type="button"
+                onClick={() => setExpanded(isOpen ? null : menu.label)}
+                className="flex h-[4.5rem] w-full items-center justify-between text-[2rem] leading-none"
+              >
+                {menu.label}
+                <Chevron open={isOpen} />
+              </button>
+              {isOpen && (
+                <ul className="flex flex-col gap-4 pb-6 pl-1">
+                  {menu.columns.flatMap((column) => column.items ?? []).map((item) => (
+                    <li key={item.label}>
+                      <NavLink label={item.label} href={item.href} className="text-base" />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
+        <li>
+          <NavLink label="Pricing" className="flex h-[4.5rem] w-full items-center text-[2rem] leading-none" />
+        </li>
+      </ul>
+      <div className="mt-auto flex h-32 flex-none flex-col items-center justify-center gap-4 bg-ink-25 text-base text-ink" onClick={onClose}>
+        <NavLink label="Contact sales" />
+        <Link href="/forms">Log in</Link>
+      </div>
+    </div>
+  );
+}
+
 export function Header() {
   const [open, setOpen] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-ink text-ink-25" onMouseLeave={() => setOpen(null)}>
-      <div className="container-site flex h-[5.5rem] items-center gap-8">
+      <div className="container-site flex h-[4.5rem] items-center gap-8 lg:h-[5.5rem]">
         <Logo />
         <nav className="hidden lg:block">
           <ul className="flex items-center">
@@ -103,20 +147,35 @@ export function Header() {
           </ul>
         </nav>
         <div className="ml-auto flex items-center gap-3">
-          <Link href="/forms" className="hidden px-3 text-base sm:block">
+          <Link href="/forms" className="hidden px-3 text-base lg:block">
             Log in
           </Link>
-          <NavLink label="Contact sales" className="btn btn-outline hidden text-base sm:inline-flex" />
+          <NavLink label="Contact sales" className="btn btn-outline hidden text-base lg:inline-flex" />
           <Link href="/forms" className="btn btn-light min-h-10 min-w-0 px-5 text-base">
             Sign up
           </Link>
+          <button
+            type="button"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMobileOpen((value) => !value)}
+            className="-mr-3 flex h-12 w-12 items-center justify-center lg:hidden"
+          >
+            {mobileOpen ? (
+              <CloseIcon width={22} height={22} />
+            ) : (
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
+      {mobileOpen && <MobileMenu onClose={() => setMobileOpen(false)} />}
       {NAV_MENUS.map((menu) => (
         <div
           key={menu.label}
           onClick={() => setOpen(null)}
-          className={`absolute inset-x-0 top-[5.5rem] border-b border-ink-800 bg-ink py-12 shadow-[0_4px_4px_#0000000a] ${open === menu.label ? "block" : "hidden"}`}
+          className={`absolute inset-x-0 top-[5.5rem] hidden border-b border-ink-800 bg-ink py-12 shadow-[0_4px_4px_#0000000a] ${open === menu.label ? "lg:block" : ""}`}
         >
           <div className="mx-auto grid max-w-[62rem] grid-cols-3 gap-8 px-8">
             {menu.columns.map((column, index) => (

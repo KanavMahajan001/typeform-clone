@@ -17,7 +17,7 @@ export function Logo({ href = "/", wordmark = true }: { href?: string; wordmark?
   return (
     <Link href={href} className="flex h-6 items-center gap-2 text-current" aria-label="Typeform">
       <LogoIcon />
-      {wordmark && <img src="/logo-type.svg" alt="" className="h-[1.5625rem] w-[6.8125rem]" />}
+      {wordmark && <img src="/logo-type.svg" alt="" className="hidden h-[1.5625rem] w-[6.8125rem] lg:block" />}
     </Link>
   );
 }
