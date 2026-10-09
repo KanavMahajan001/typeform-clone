@@ -31,10 +31,17 @@ npm run dev                      # http://localhost:3000
 ### Tests
 
 ```bash
-cd backend
-pip install -r requirements-dev.txt
-pytest
+# backend: API, validation and stats (pytest, in-memory SQLite)
+cd backend && pip install -r requirements-dev.txt && pytest
+
+# frontend: unit + component tests (Vitest, Testing Library, jsdom)
+cd frontend && npm test
+
+# frontend: end-to-end (Playwright, uses the installed Chrome; starts both servers if needed)
+cd frontend && npm run test:e2e
 ```
+
+The end-to-end suite creates a form, adds and reorders questions, publishes it, fills it out through the public link, checks the results page, and cleans up after itself.
 
 ## Routes
 

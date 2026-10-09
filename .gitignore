@@ -4,6 +4,8 @@ out/
 *.tsbuildinfo
 next-env.d.ts
 frontend/AGENTS.md
+frontend/test-results/
+frontend/playwright-report/
 
 .venv/
 __pycache__/

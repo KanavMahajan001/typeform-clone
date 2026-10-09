@@ -39,7 +39,13 @@ export function SharePanel({ form }: { form: FormSummary }) {
             Link
           </p>
           <div className="flex gap-2">
-            <input readOnly value={link} className="form-input bg-admin-bg" onFocus={(event) => event.target.select()} />
+            <input
+              readOnly
+              aria-label="Public link"
+              value={link}
+              className="form-input bg-admin-bg"
+              onFocus={(event) => event.target.select()}
+            />
             <Button onClick={copy} disabled={!published}>
               Copy link
             </Button>
