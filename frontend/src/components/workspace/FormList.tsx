@@ -17,7 +17,7 @@ import { api } from "@/lib/api";
 import { formatDay, pluralize } from "@/lib/format";
 import type { FormSummary } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
-import { CopyIcon, FormIcon, IntegrationsIcon, MoreIcon, TrashIcon } from "@/components/ui/Icons";
+import { CopyIcon, FormIcon, IntegrationsIcon, MoreIcon, PencilIcon, TrashIcon } from "@/components/ui/Icons";
 import { Menu } from "@/components/ui/Menu";
 import { Modal } from "@/components/ui/Modal";
 import type { View } from "./WorkspaceHeader";
@@ -123,7 +123,7 @@ export function FormList({ forms, view }: { forms: FormSummary[]; view: View }) 
       }
       items={[
         { label: "Open", onSelect: () => open(form), icon: <FormIcon /> },
-        { label: "Rename", onSelect: () => setRenaming(form) },
+        { label: "Rename", onSelect: () => setRenaming(form), icon: <PencilIcon /> },
         { label: "Duplicate", onSelect: () => duplicate(form), icon: <CopyIcon /> },
         { label: "Delete", onSelect: () => setDeleting(form), danger: true, icon: <TrashIcon /> },
       ]}
