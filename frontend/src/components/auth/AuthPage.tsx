@@ -12,31 +12,18 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { api, ApiError } from "@/lib/api";
 import { setToken } from "@/lib/auth";
 import { comingSoon } from "@/lib/links";
-import { Logo } from "@/components/landing/Logo";
+import { LogoIcon } from "@/components/landing/Logo";
+import { ChevronDownIcon, GlobeIcon } from "@/components/ui/Icons";
+import { Showcase } from "./Showcase";
 
 type Mode = "login" | "signup";
 
-const COPY: Record<Mode, { title: string; subtitle?: string; submit: string; switchText: string; switchLabel: string; switchHref: string }> = {
-  login: {
-    title: "Hello, who’s this?",
-    subtitle: "Log in to Typeform",
-    submit: "Log in",
-    switchText: "Don’t have an account?",
-    switchLabel: "Sign up",
-    switchHref: "/signup",
-  },
-  signup: {
-    title: "Get better data with conversational forms, surveys, quizzes & more.",
-    submit: "Get started—it’s free",
-    switchText: "Already have an account?",
-    switchLabel: "Log in",
-    switchHref: "/login",
-  },
-};
+const FIELD = "h-12 w-full rounded-lg border border-ink-300 bg-white px-4 text-base outline-none transition-colors placeholder:text-ink-500 focus:border-ink";
+const OAUTH = "relative flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-ink-300 bg-white text-base transition-colors hover:bg-ink-50";
 
 function GoogleIcon() {
   return (
@@ -60,19 +47,66 @@ function MicrosoftIcon() {
   );
 }
 
-const FIELD = "h-12 w-full rounded-lg border border-ink-300 px-4 text-base outline-none transition-colors placeholder:text-ink-500 focus:border-ink";
+/** Icon plus wordmark in ink; the wordmark asset is white because the landing header is dark. */
+function Wordmark({ size = "sm" }: { size?: "sm" | "lg" }) {
+  const scale = size === "lg" ? "h-7 w-[3.1rem]" : "h-6 w-[2.6875rem]";
+  const mark = size === "lg" ? "h-7" : "h-6";
+  return (
+    <span className="flex items-center gap-2">
+      <LogoIcon className={scale} />
+      <img src="/logo-type.svg" alt="Typeform" className={`${mark} w-auto brightness-0`} />
+    </span>
+  );
+}
 
-export function AuthPage({ mode }: { mode: Mode }) {
+function LanguagePill() {
+  return (
+    <button
+      type="button"
+      onClick={() => comingSoon("Language selection")}
+      className="flex h-10 items-center gap-2 rounded-lg border border-ink-200 px-3 text-sm transition-colors hover:bg-ink-50"
+    >
+      <GlobeIcon />
+      English
+      <ChevronDownIcon className="ml-2" />
+    </button>
+  );
+}
+
+function OAuthButtons({ verb, lastUsed = false }: { verb: string; lastUsed?: boolean }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <button type="button" onClick={() => comingSoon("Google sign-in")} className={OAUTH}>
+        {lastUsed && (
+          <span className="absolute -top-3 right-4 rounded-full border border-[#9dbde6] bg-[#eaf2fb] px-2 py-0.5 text-xs text-[#1f4e8c]">Last used</span>
+        )}
+        <GoogleIcon />
+        {verb} with Google
+      </button>
+      <button type="button" onClick={() => comingSoon("Microsoft sign-in")} className={OAUTH}>
+        <MicrosoftIcon />
+        {verb} with Microsoft
+      </button>
+    </div>
+  );
+}
+
+function Divider({ children }: { children?: ReactNode }) {
+  return (
+    <div className="my-6 flex items-center gap-4 text-xs text-ink-600">
+      <span className="h-px flex-1 bg-ink-200" />
+      {children}
+      <span className="h-px flex-1 bg-ink-200" />
+    </div>
+  );
+}
+
+const useAuthSubmit = (mode: Mode) => {
   const router = useRouter();
-  const copy = COPY[mode];
-  const verb = mode === "login" ? "Log in" : "Sign up";
-  const [agreed, setAgreed] = useState(mode === "login");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = Object.fromEntries(new FormData(event.currentTarget)) as Record<string, string>;
+  const submit = async (data: Record<string, string>) => {
     setBusy(true);
     setError(null);
     try {
@@ -89,85 +123,164 @@ export function AuthPage({ mode }: { mode: Mode }) {
     }
   };
 
+  return { submit, error, busy };
+};
+
+const formData = (event: FormEvent<HTMLFormElement>) => Object.fromEntries(new FormData(event.currentTarget)) as Record<string, string>;
+
+function LoginPage() {
+  const { submit, error, busy } = useAuthSubmit("login");
+  const [step, setStep] = useState<"email" | "password">("email");
+
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (step === "email") return setStep("password");
+    void submit(formData(event));
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-white text-ink">
-      <header className="flex h-[4.5rem] items-center justify-between px-6 lg:px-10">
-        <Logo />
-        <p className="text-sm text-ink-700">
-          {copy.switchText}{" "}
-          <Link href={copy.switchHref} className="font-medium text-ink underline underline-offset-4">
-            {copy.switchLabel}
-          </Link>
-        </p>
+      <header className="flex h-14 flex-none items-center justify-between px-6">
+        <Link href="/" aria-label="Typeform home">
+          <Wordmark />
+        </Link>
+        <div className="flex items-center gap-6 text-sm">
+          <p className="hidden sm:block">
+            Have a question?{" "}
+            <button type="button" onClick={() => comingSoon("Contact us")} className="underline underline-offset-4">
+              Contact us
+            </button>
+          </p>
+          <LanguagePill />
+        </div>
       </header>
-      <main className="flex flex-1 flex-col items-center px-6 py-12 lg:py-20">
-        <div className="rise w-full max-w-[25rem] text-center">
-          <h1 className={mode === "login" ? "heading-four" : "text-2xl leading-8"}>{copy.title}</h1>
-          {copy.subtitle && <p className="mt-2 text-base text-ink-700">{copy.subtitle}</p>}
-          <div className="mt-8 flex flex-col gap-3">
-            <button type="button" onClick={() => comingSoon("Google sign-in")} className="flex h-12 items-center justify-center gap-3 rounded-lg border border-ink-300 text-base hover:bg-ink-50">
-              <GoogleIcon />
-              {verb} with Google
-            </button>
-            <button type="button" onClick={() => comingSoon("Microsoft sign-in")} className="flex h-12 items-center justify-center gap-3 rounded-lg border border-ink-300 text-base hover:bg-ink-50">
-              <MicrosoftIcon />
-              {verb} with Microsoft
-            </button>
-          </div>
-          <div className="my-6 flex items-center gap-4 text-xs text-ink-600">
-            <span className="h-px flex-1 bg-ink-200" />
-            OR
-            <span className="h-px flex-1 bg-ink-200" />
-          </div>
-          <form onSubmit={submit} className="flex flex-col gap-3 text-left">
-            {mode === "signup" && <input name="name" required placeholder="Full name" aria-label="Full name" autoComplete="name" className={FIELD} />}
-            <input name="email" type="email" required placeholder="Email" aria-label="Email" autoComplete="email" className={FIELD} />
-            <input
-              name="password"
-              type="password"
-              required
-              minLength={mode === "signup" ? 8 : 1}
-              placeholder="Password"
-              aria-label="Password"
-              autoComplete={mode === "login" ? "current-password" : "new-password"}
-              className={FIELD}
-            />
-            {mode === "login" ? (
-              <button type="button" onClick={() => comingSoon("Password reset")} className="self-start text-sm underline underline-offset-4">
-                Forgot password?
-              </button>
-            ) : (
-              <label className="flex cursor-pointer items-start gap-3 text-sm text-ink-700">
-                <input type="checkbox" checked={agreed} onChange={(event) => setAgreed(event.target.checked)} className="mt-1 h-4 w-4 accent-ink" />
-                <span>
-                  I agree to Typeform’s{" "}
-                  <button type="button" onClick={() => comingSoon("Terms of Service")} className="underline underline-offset-2">
-                    Terms of Service
-                  </button>
-                  ,{" "}
-                  <button type="button" onClick={() => comingSoon("Privacy Policy")} className="underline underline-offset-2">
-                    Privacy Policy
-                  </button>{" "}
-                  and{" "}
-                  <button type="button" onClick={() => comingSoon("Data Processing Agreement")} className="underline underline-offset-2">
-                    Data Processing Agreement
-                  </button>
-                  .
-                </span>
+      <main className="mx-6 mb-6 flex flex-1 overflow-hidden rounded-sm border border-ink-200">
+        <section className="flex flex-1 flex-col justify-center bg-ink-25 px-6 py-12 sm:px-12 xl:px-[6.5rem]">
+          <div className="rise w-full max-w-[31rem]">
+            <h1 className="text-[2rem] leading-10">Log in</h1>
+            <p className="mt-2 text-base text-ink-700">Build forms, gather responses, and automate your workflows.</p>
+            <div className="mt-10">
+              <OAuthButtons verb="Continue" lastUsed />
+            </div>
+            <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-4">
+              <label className="flex flex-col gap-2 text-base">
+                Email
+                <input name="email" type="email" required autoComplete="email" className={FIELD} />
               </label>
-            )}
-            {error && <p className="text-sm text-danger">{error}</p>}
-            <button type="submit" disabled={!agreed || busy} className="btn btn-dark mt-2 w-full disabled:cursor-not-allowed disabled:opacity-50">
-              {copy.submit}
-            </button>
-          </form>
-          {mode === "login" && (
-            <p className="mt-6 text-xs text-ink-600">
+              {step === "password" && (
+                <label className="flex flex-col gap-2 text-base">
+                  Password
+                  <input name="password" type="password" required autoFocus autoComplete="current-password" className={FIELD} />
+                </label>
+              )}
+              {error && <p className="text-sm text-danger">{error}</p>}
+              <button type="submit" disabled={busy} className="btn btn-dark w-full disabled:cursor-not-allowed disabled:opacity-50">
+                {step === "email" ? "Continue with email" : "Log in"}
+              </button>
+            </form>
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => comingSoon(step === "password" ? "Password reset" : "Single sign-on")}
+                className="text-base underline underline-offset-4"
+              >
+                {step === "password" ? "Forgot password?" : "Log in with SSO"}
+              </button>
+            </div>
+            <Divider />
+            <p className="text-center text-base">
+              Don’t have an account?{" "}
+              <Link href="/signup" className="underline underline-offset-4">
+                Sign up
+              </Link>
+            </p>
+            <p className="mt-6 text-center text-xs text-ink-600">
               Demo account: <span className="font-medium text-ink">kanav@example.com</span> / <span className="font-medium text-ink">typeform123</span>
             </p>
-          )}
-        </div>
+          </div>
+        </section>
+        <Showcase tone="dark" heading="Continue exploring powerful features that make data collection effortless" className="hidden lg:flex lg:w-1/2" />
       </main>
     </div>
   );
+}
+
+function SignupPage() {
+  const { submit, error, busy } = useAuthSubmit("signup");
+  const [stage, setStage] = useState<"choose" | "email">("choose");
+  const [agreed, setAgreed] = useState(false);
+
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void submit(formData(event));
+  };
+
+  return (
+    <div className="flex min-h-screen bg-[#3a2f3c] text-ink lg:pt-4">
+      <Showcase tone="light" brands className="hidden lg:flex lg:w-1/2" />
+      <section className="flex flex-1 flex-col bg-white lg:rounded-tl-2xl">
+        <header className="flex items-center justify-between px-5 pt-5">
+          <LanguagePill />
+          <p className="flex items-center gap-3 text-sm">
+            <span className="hidden sm:inline">Already have an account?</span>
+            <Link href="/login" className="flex h-10 items-center rounded-lg border border-ink-200 px-4 text-sm font-medium transition-colors hover:bg-ink-50">
+              Log in
+            </Link>
+          </p>
+        </header>
+        <div className="flex flex-1 flex-col items-center justify-center px-6 py-16">
+          <div className="rise w-full max-w-[31rem] text-center">
+            <Link href="/" aria-label="Typeform home" className="inline-flex">
+              <Wordmark size="lg" />
+            </Link>
+            <h1 className="mt-8 text-[1.75rem] leading-9">Sign up today. Start with a form, end with a conversation.</h1>
+            {stage === "choose" ? (
+              <div className="mt-8">
+                <OAuthButtons verb="Sign up" />
+                <Divider>OR</Divider>
+                <button type="button" onClick={() => setStage("email")} className="btn btn-dark w-full">
+                  Sign up with email
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-3 text-left">
+                <input name="name" required placeholder="Full name" aria-label="Full name" autoComplete="name" autoFocus className={FIELD} />
+                <input name="email" type="email" required placeholder="Email" aria-label="Email" autoComplete="email" className={FIELD} />
+                <input name="password" type="password" required minLength={8} placeholder="Password" aria-label="Password" autoComplete="new-password" className={FIELD} />
+                <label className="flex cursor-pointer items-start gap-3 text-sm text-ink-700">
+                  <input type="checkbox" checked={agreed} onChange={(event) => setAgreed(event.target.checked)} className="mt-1 h-4 w-4 accent-ink" />
+                  <span>
+                    I agree to Typeform’s{" "}
+                    <button type="button" onClick={() => comingSoon("Terms of Service")} className="underline underline-offset-2">
+                      Terms of Service
+                    </button>
+                    ,{" "}
+                    <button type="button" onClick={() => comingSoon("Privacy Policy")} className="underline underline-offset-2">
+                      Privacy Policy
+                    </button>{" "}
+                    and{" "}
+                    <button type="button" onClick={() => comingSoon("Data Processing Agreement")} className="underline underline-offset-2">
+                      Data Processing Agreement
+                    </button>
+                    .
+                  </span>
+                </label>
+                {error && <p className="text-sm text-danger">{error}</p>}
+                <button type="submit" disabled={!agreed || busy} className="btn btn-dark mt-2 w-full disabled:cursor-not-allowed disabled:opacity-50">
+                  Get started—it’s free
+                </button>
+                <button type="button" onClick={() => setStage("choose")} className="mt-1 self-center text-sm underline underline-offset-4">
+                  Other sign-up options
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export function AuthPage({ mode }: { mode: Mode }) {
+  return mode === "login" ? <LoginPage /> : <SignupPage />;
 }

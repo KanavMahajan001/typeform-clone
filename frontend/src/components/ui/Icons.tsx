@@ -59,6 +59,25 @@ export const PencilIcon = (p: Props) => (
   </svg>
 );
 
+export const ChevronRightIcon = (p: Props) => (
+  <svg {...base(p)}>
+    <path d="m9 6 6 6-6 6" />
+  </svg>
+);
+
+export const PauseIcon = (p: Props) => (
+  <svg {...base(p)}>
+    <path d="M9 5v14M15 5v14" />
+  </svg>
+);
+
+export const GlobeIcon = (p: Props) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+  </svg>
+);
+
 export const ChevronDownIcon = (p: Props) => (
   <svg {...base(p)}>
     <path d="m6 9 6 6 6-6" />

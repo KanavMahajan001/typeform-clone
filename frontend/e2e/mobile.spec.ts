@@ -21,6 +21,7 @@ test("landing page works on a phone", async ({ page }) => {
   await page.getByRole("link", { name: "Log in" }).click();
   await expect(page).toHaveURL(/\/login$/);
   await page.getByLabel("Email").fill("kanav@example.com");
+  await page.getByRole("button", { name: "Continue with email" }).click();
   await page.getByLabel("Password").fill("typeform123");
   await page.getByRole("button", { name: "Log in", exact: true }).click();
   await expect(page).toHaveURL(/\/forms$/);

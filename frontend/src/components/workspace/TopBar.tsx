@@ -10,6 +10,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { clearToken } from "@/lib/auth";
@@ -39,7 +40,9 @@ export function TopBar({ user }: { user: User }) {
   return (
     <header className="flex h-16 items-center justify-between px-4 lg:px-6">
       <div className="flex items-center gap-3">
-        <LogoIcon className="h-5 w-9" />
+        <Link href="/" aria-label="Typeform home" className="flex items-center">
+          <LogoIcon className="h-5 w-9" />
+        </Link>
         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#5c8fd6] text-lg font-medium text-white">{initials(user.name)[0]}</span>
         <span className="flex items-center gap-1 text-base font-medium">
           {user.name}

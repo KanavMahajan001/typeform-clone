@@ -22,6 +22,7 @@ test("signup creates a private workspace and login switches accounts", async ({ 
   const email = `saumil-${Date.now()}@example.com`;
 
   await page.goto("/signup");
+  await page.getByRole("button", { name: "Sign up with email" }).click();
   await page.getByLabel("Full name").fill("Saumil Makkar");
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill("longenough");
@@ -37,6 +38,7 @@ test("signup creates a private workspace and login switches accounts", async ({ 
   await expect(page).toHaveURL(/\/login$/);
 
   await page.getByLabel("Email").fill(DEMO.email);
+  await page.getByRole("button", { name: "Continue with email" }).click();
   await page.getByLabel("Password").fill("wrong-password");
   await page.getByRole("button", { name: "Log in", exact: true }).click();
   await expect(page.getByText("Wrong email or password")).toBeVisible();
