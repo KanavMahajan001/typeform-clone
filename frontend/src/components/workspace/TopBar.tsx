@@ -1,13 +1,17 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { LogoIcon } from "@/components/landing/Logo";
 import { Button } from "@/components/ui/Button";
 import { BrushIcon, ChevronDownIcon, HelpIcon, IntegrationsIcon } from "@/components/ui/Icons";
+import { Menu } from "@/components/ui/Menu";
 import { comingSoon } from "@/lib/links";
 
 const soon = (feature: string) => () => comingSoon(feature);
 
 export function TopBar() {
+  const router = useRouter();
+
   return (
     <header className="flex h-16 items-center justify-between px-4 lg:px-6">
       <div className="flex items-center gap-3">
@@ -32,9 +36,17 @@ export function TopBar() {
         <Button variant="ghost" aria-label="Help" onClick={soon("Help center")} className="px-2">
           <HelpIcon width={20} height={20} />
         </Button>
-        <span className="ml-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#dde8f7] text-sm font-medium text-[#1f4e8c]">
-          KM
-        </span>
+        <Menu
+          trigger={
+            <button type="button" aria-label="Account" className="ml-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#dde8f7] text-sm font-medium text-[#1f4e8c]">
+              KM
+            </button>
+          }
+          items={[
+            { label: "Account settings", onSelect: soon("Account settings") },
+            { label: "Log out", onSelect: () => router.push("/") },
+          ]}
+        />
       </div>
     </header>
   );

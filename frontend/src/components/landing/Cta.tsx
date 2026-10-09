@@ -21,7 +21,7 @@ export function Cta() {
           <br />
           All in Typeform.
         </h2>
-        <Link href="/forms" className="btn btn-light mt-1">
+        <Link href="/signup" className="btn btn-light mt-1">
           Get started—it’s free
         </Link>
       </div>

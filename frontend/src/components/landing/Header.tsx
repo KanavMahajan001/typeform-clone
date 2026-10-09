@@ -114,7 +114,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
       </ul>
       <div className="mt-auto flex h-32 flex-none flex-col items-center justify-center gap-4 bg-ink-25 text-base text-ink" onClick={onClose}>
         <NavLink label="Contact sales" />
-        <Link href="/forms">Log in</Link>
+        <Link href="/login">Log in</Link>
       </div>
     </div>
   );
@@ -147,11 +147,11 @@ export function Header() {
           </ul>
         </nav>
         <div className="ml-auto flex items-center gap-3">
-          <Link href="/forms" className="hidden px-3 text-base lg:block">
+          <Link href="/login" className="hidden px-3 text-base lg:block">
             Log in
           </Link>
           <NavLink label="Contact sales" className="btn btn-outline hidden text-base lg:inline-flex" />
-          <Link href="/forms" className="btn btn-light min-h-10 min-w-0 px-5 text-base">
+          <Link href="/signup" className="btn btn-light min-h-10 min-w-0 px-5 text-base">
             Sign up
           </Link>
           <button

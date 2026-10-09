@@ -8,6 +8,10 @@ test("landing page works on a phone", async ({ page }) => {
   await page.getByRole("button", { name: "Platform" }).click();
   await expect(page.getByRole("link", { name: "Form builder", exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Log in" }).click();
+  await expect(page).toHaveURL(/\/login$/);
+  await page.getByLabel("Email").fill("kanav@example.com");
+  await page.getByLabel("Password").fill("secret");
+  await page.getByRole("button", { name: "Log in", exact: true }).click();
   await expect(page).toHaveURL(/\/forms$/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
