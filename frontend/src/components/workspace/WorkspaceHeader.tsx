@@ -12,7 +12,7 @@
 
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
-import { CalendarIcon, ChevronDownIcon, GemIcon, GridIcon, ListIcon, MoreIcon, UserAddIcon } from "@/components/ui/Icons";
+import { CalendarIcon, ChevronDownIcon, GridIcon, ListIcon, UserAddIcon } from "@/components/ui/Icons";
 import { Menu } from "@/components/ui/Menu";
 
 export type SortKey = "created_at" | "updated_at" | "title";
