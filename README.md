@@ -41,7 +41,7 @@ cd frontend && npm test
 cd frontend && npm run test:e2e
 ```
 
-The end-to-end suite creates a form, adds and reorders questions, publishes it, fills it out through the public link, checks the results page, and cleans up after itself.
+The end-to-end suite runs on desktop and phone viewports: it creates forms, adds every question type, edits settings, reorders by drag and keyboard, duplicates and deletes, publishes and unpublishes, previews, fills forms through the public link, checks results, and cleans up after itself.
 
 ## Routes
 

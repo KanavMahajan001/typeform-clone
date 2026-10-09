@@ -132,6 +132,7 @@ export function Respondent({ form, preview = false }: { form: PublicForm; previe
         ) : question ? (
           <motion.div
             key={question.id}
+            data-question={question.id}
             variants={variants}
             custom={direction}
             initial="enter"

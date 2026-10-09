@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { questionMeta } from "@/lib/questions";
-import type { AnswerValue } from "@/lib/types";
 import { FormFooter } from "@/components/form/FormFooter";
 import { OkButton } from "@/components/form/OkButton";
 import { QuestionNumber } from "@/components/form/QuestionHeader";
@@ -25,16 +23,19 @@ function AutoTextarea({
   placeholder,
   className,
   style,
+  autoFocus,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
   className: string;
   style?: React.CSSProperties;
+  autoFocus?: boolean;
 }) {
   return (
     <textarea
       rows={1}
+      autoFocus={autoFocus}
       value={value}
       placeholder={placeholder}
       onChange={(event) => onChange(event.target.value)}
@@ -100,8 +101,6 @@ interface Props {
 }
 
 export function Canvas({ question, index, total, status, onChange }: Props) {
-  const [value, setValue] = useState<AnswerValue>(null);
-
   return (
     <section className="hidden min-w-0 flex-1 flex-col bg-admin-bg lg:flex">
       <div className="flex h-10 items-center justify-end px-4 text-xs text-admin-muted">{STATUS_TEXT[status]}</div>
@@ -114,6 +113,8 @@ export function Canvas({ question, index, total, status, onChange }: Props) {
                 <div className="flex min-w-0 flex-1 flex-col gap-6">
                   <div className="flex flex-col gap-2">
                     <AutoTextarea
+                      key={question.key}
+                      autoFocus={!question.title}
                       value={question.title}
                       onChange={(title) => onChange({ title })}
                       placeholder="Your question here."
@@ -133,7 +134,9 @@ export function Canvas({ question, index, total, status, onChange }: Props) {
                   {questionMeta(question.type).hasOptions ? (
                     <OptionEditor options={question.options} onChange={(options) => onChange({ options })} />
                   ) : (
-                    <QuestionField key={question.key} type={question.type} options={[]} value={value} onChange={setValue} />
+                    <div className="pointer-events-none select-none">
+                      <QuestionField type={question.type} options={[]} value={null} onChange={() => {}} />
+                    </div>
                   )}
                   <OkButton label={index === total - 1 ? "Submit" : "OK"} />
                 </div>

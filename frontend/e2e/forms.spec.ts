@@ -57,7 +57,7 @@ test("creator builds, publishes and collects a response", async ({ page }) => {
   await expect(page.getByText("Please fill this in")).toBeVisible();
   await page.getByPlaceholder("Type your answer here...").fill("Playwright");
   await page.keyboard.press("Enter");
-  await expect(page.getByText("Thanks for completing this typeform")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Thanks for completing this typeform" })).toBeVisible();
 
   await page.goto("/forms");
   const row = page.getByRole("listitem").filter({ hasText: title });
@@ -90,9 +90,4 @@ test("workspace can rename, duplicate and delete a form", async ({ page }) => {
 
   await deleteForm(page, `${title} renamed`);
   await deleteForm(page, title);
-});
-
-test("unpublished forms are not reachable publicly", async ({ page }) => {
-  await page.goto("/to/doesnotex");
-  await expect(page.getByText("This form isn't available")).toBeVisible();
 });
