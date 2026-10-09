@@ -12,11 +12,11 @@ import type { Page } from "@playwright/test";
 import { expect, test } from "./fixtures";
 import { API, deleteForm } from "./helpers";
 
-const TYPES = ["Short text", "Long text", "Multiple choice", "Dropdown", "Yes/No", "Email", "Number", "Rating"];
+const TYPES = ["Short Text", "Long Text", "Multiple Choice", "Dropdown", "Yes/No", "Email", "Number", "Rating"];
 
 async function addQuestion(page: Page, type: string, title: string) {
   await page.getByRole("button", { name: "Add content" }).click();
-  await page.getByRole("dialog").getByRole("button", { name: type, exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: type, exact: true }).first().click();
   await page.getByPlaceholder("Your question here.").fill(title);
 }
 
@@ -49,15 +49,15 @@ test("builder supports every question type, settings, reorder, duplicate and del
   await expect(page.getByText("All changes saved")).toBeVisible();
 
   await list.nth(0).click();
-  await page.getByRole("button", { name: /Short text/ }).click();
-  await page.getByRole("button", { name: "Long text" }).last().click();
+  await page.getByRole("button", { name: /Short Text/ }).click();
+  await page.getByRole("button", { name: "Long Text" }).last().click();
   await expect(page.getByText("Shift ⇧")).toBeVisible();
 
   await list.nth(1).hover();
   await list.nth(1).getByRole("button", { name: "Question actions" }).click();
   await page.getByRole("button", { name: "Duplicate" }).click();
   await expect(list).toHaveCount(9);
-  await expect(list.nth(2)).toContainText("Q2 Long text");
+  await expect(list.nth(2)).toContainText("Q2 Long Text");
 
   await list.nth(2).hover();
   await list.nth(2).getByRole("button", { name: "Question actions" }).click();
@@ -78,9 +78,9 @@ test("builder supports every question type, settings, reorder, duplicate and del
 
   await page.getByRole("button", { name: "Thank you screen" }).click();
   await expect(page.getByRole("heading", { name: "Thanks for completing this typeform" })).toBeVisible();
-  await page.getByRole("button", { name: "Design" }).click();
+  await page.getByRole("button", { name: "Design" }).first().click();
   await expect(page.getByRole("button", { name: "Midnight" })).toBeVisible();
-  await page.getByRole("button", { name: "Logic" }).click();
+  await page.getByRole("button", { name: "Logic" }).first().click();
   await expect(page.getByText("Pick a question to add logic jumps.")).toBeVisible();
 
   const saved = await (await api.get(`${API}/forms/${id}`)).json();

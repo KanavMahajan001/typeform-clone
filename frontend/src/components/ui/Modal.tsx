@@ -19,9 +19,10 @@ interface Props {
   title?: string;
   children: ReactNode;
   width?: string;
+  bare?: boolean;
 }
 
-export function Modal({ open, onClose, title, children, width = "max-w-md" }: Props) {
+export function Modal({ open, onClose, title, children, width = "max-w-md", bare = false }: Props) {
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
@@ -36,9 +37,10 @@ export function Modal({ open, onClose, title, children, width = "max-w-md" }: Pr
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative w-full ${width} rounded-2xl bg-admin-surface p-8 text-admin-text shadow-[0_8px_30px_rgba(0,0,0,0.2)]`}
+        className={`relative w-full ${width} overflow-hidden rounded-2xl bg-admin-surface text-admin-text shadow-[0_8px_30px_rgba(0,0,0,0.2)] ${bare ? "" : "p-8"}`}
         onMouseDown={(event) => event.stopPropagation()}
       >
+        {!bare && (
         <button
           type="button"
           onClick={onClose}
@@ -47,6 +49,7 @@ export function Modal({ open, onClose, title, children, width = "max-w-md" }: Pr
         >
           <CloseIcon width={18} height={18} />
         </button>
+        )}
         {title && <h2 className="mb-6 pr-8 text-2xl font-medium">{title}</h2>}
         {children}
       </div>

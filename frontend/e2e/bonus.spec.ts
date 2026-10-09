@@ -18,7 +18,7 @@ test("logic jumps skip questions in the public form", async ({ page, api }) => {
   const form = await seedForm(api, `Logic ${Date.now()}`);
   await page.goto(`/forms/${form.id}/create`);
   await page.locator("aside ul li").nth(6).click();
-  await page.getByRole("button", { name: "Logic" }).click();
+  await page.getByRole("button", { name: "Logic" }).first().click();
   await page.getByRole("button", { name: "Add rule" }).click();
   await page.getByLabel("Condition").selectOption("equals");
   await page.getByLabel("Value").selectOption("No");
@@ -52,7 +52,7 @@ test("logic jumps skip questions in the public form", async ({ page, api }) => {
 test("themes change the public form's look", async ({ page, api }) => {
   const form = await seedForm(api, `Theme ${Date.now()}`);
   await page.goto(`/forms/${form.id}/create`);
-  await page.getByRole("button", { name: "Design" }).click();
+  await page.getByRole("button", { name: "Design" }).first().click();
   await page.getByRole("button", { name: "Midnight" }).click();
   await expect(page.getByText("All changes saved")).toBeVisible();
   await expect.poll(async () => (await (await api.get(`${API}/forms/${form.id}`)).json()).theme.background_color).toBe("#2a222b");

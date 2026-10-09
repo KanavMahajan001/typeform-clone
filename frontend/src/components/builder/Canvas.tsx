@@ -20,14 +20,7 @@ import { QuestionField } from "@/components/form/QuestionField";
 import { OPTION_KEYS, THEME } from "@/components/form/theme";
 import { ThankYou } from "@/components/form/ThankYou";
 import { CloseIcon, PlusIcon } from "@/components/ui/Icons";
-import type { SaveStatus } from "./Builder";
 import type { Draft } from "./draft";
-
-const STATUS_TEXT: Record<SaveStatus, string> = {
-  saved: "All changes saved",
-  saving: "Saving…",
-  error: "Changes not saved",
-};
 
 function AutoTextarea({
   value,
@@ -111,16 +104,14 @@ interface Props {
   question: Draft | null;
   index: number;
   total: number;
-  status: SaveStatus;
   theme: Theme;
   onChange: (changes: Partial<Draft>) => void;
 }
 
-export function Canvas({ question, index, total, status, theme, onChange }: Props) {
+export function Canvas({ question, index, total, theme, onChange }: Props) {
   return (
-    <section className="hidden min-w-0 flex-1 flex-col bg-admin-bg lg:flex">
-      <div className="flex h-10 items-center justify-end px-4 text-xs text-admin-muted">{STATUS_TEXT[status]}</div>
-      <div className="flex min-h-0 flex-1 items-center justify-center overflow-auto px-8 pb-8">
+    <section className="flex min-h-0 flex-1 items-start justify-center overflow-auto rounded-xl border border-admin-border bg-admin-surface p-6">
+      <div className="flex w-full items-center justify-center">
         <div
           className="relative aspect-[16/10] w-full max-w-4xl overflow-hidden rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.08)]"
           style={themeStyle(theme)}

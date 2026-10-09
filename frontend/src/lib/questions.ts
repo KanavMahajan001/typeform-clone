@@ -20,15 +20,15 @@ export interface QuestionTypeMeta {
 }
 
 export const QUESTION_TYPES: QuestionTypeMeta[] = [
-  { type: "short_text", label: "Short text", group: "Text", bg: "#d2e3f7", fg: "#1f4e8c", hasOptions: false },
-  { type: "long_text", label: "Long text", group: "Text", bg: "#d2e3f7", fg: "#1f4e8c", hasOptions: false },
-  { type: "multiple_choice", label: "Multiple choice", group: "Choice", bg: "#e4d8f5", fg: "#5a3a8f", hasOptions: true },
+  { type: "short_text", label: "Short Text", group: "Text", bg: "#d2e3f7", fg: "#1f4e8c", hasOptions: false },
+  { type: "long_text", label: "Long Text", group: "Text", bg: "#d2e3f7", fg: "#1f4e8c", hasOptions: false },
+  { type: "multiple_choice", label: "Multiple Choice", group: "Choice", bg: "#e4d8f5", fg: "#5a3a8f", hasOptions: true },
   { type: "dropdown", label: "Dropdown", group: "Choice", bg: "#e4d8f5", fg: "#5a3a8f", hasOptions: true },
   { type: "yes_no", label: "Yes/No", group: "Choice", bg: "#e4d8f5", fg: "#5a3a8f", hasOptions: false },
   { type: "email", label: "Email", group: "Contact info", bg: "#f9d9d5", fg: "#9b3a30", hasOptions: false },
-  { type: "number", label: "Number", group: "Number", bg: "#d4efe4", fg: "#1e6b4d", hasOptions: false },
-  { type: "rating", label: "Rating", group: "Rating", bg: "#fbe8b4", fg: "#8a6100", hasOptions: false },
-  { type: "file_upload", label: "File upload", group: "Other", bg: "#fde0c8", fg: "#8a4a12", hasOptions: false },
+  { type: "number", label: "Number", group: "Other", bg: "#fbe8b4", fg: "#8a6100", hasOptions: false },
+  { type: "rating", label: "Rating", group: "Rating & ranking", bg: "#d4efe4", fg: "#1e6b4d", hasOptions: false },
+  { type: "file_upload", label: "File Upload", group: "Other", bg: "#fbe8b4", fg: "#8a6100", hasOptions: false },
 ];
 
 export const COMING_SOON_TYPES = [{ label: "Payment", group: "Other" }];

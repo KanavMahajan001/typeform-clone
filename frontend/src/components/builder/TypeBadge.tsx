@@ -41,14 +41,14 @@ const GLYPHS: Record<QuestionType, React.ReactNode> = {
 interface Props {
   type: QuestionType;
   number?: number;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "tile";
 }
 
 export function TypeBadge({ type, number, size = "md" }: Props) {
   const meta = questionMeta(type);
   return (
     <span
-      className={`inline-flex flex-none items-center gap-1 rounded-md font-medium ${size === "sm" ? "h-6 px-1.5 text-xs" : "h-7 px-2 text-xs"}`}
+      className={`inline-flex flex-none items-center gap-1 rounded-md font-medium ${size === "sm" ? "h-6 px-1.5 text-xs" : size === "tile" ? "h-7 w-7 justify-center" : "h-7 px-2 text-xs"}`}
       style={{ background: meta.bg, color: meta.fg }}
     >
       <svg viewBox="0 0 24 24" width={size === "sm" ? 14 : 16} height={size === "sm" ? 14 : 16} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

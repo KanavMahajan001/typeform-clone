@@ -33,12 +33,12 @@ test("creator builds, publishes and collects a response", async ({ page }) => {
   const title = await createForm(page);
 
   await page.getByRole("button", { name: "Add content" }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "Short text" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Short Text" }).first().click();
   await page.getByPlaceholder("Your question here.").fill("What is your name?");
   await page.getByRole("switch", { name: "Required" }).click();
 
   await page.getByRole("button", { name: "Add content" }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "Yes/No" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Yes/No" }).first().click();
   await page.getByPlaceholder("Your question here.").fill("Do you like it?");
   await expect(page.getByText("All changes saved")).toBeVisible();
 
