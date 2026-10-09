@@ -69,29 +69,37 @@ Source: [`docs/architecture.excalidraw`](docs/architecture.excalidraw)
 ```
 frontend/src
 ├── app/                  Next.js routes (server components fetch, client components interact)
+│   ├── login, signup, logout   account pages and the cookie-clearing logout route
 │   ├── (workspace)/forms       workspace with sidebar
 │   ├── forms/[id]/…            builder shell with Create / Connect / Share / Results tabs
 │   └── to/[publicId]           respondent flow
+├── proxy.ts              cookie guard: /forms needs a session, logged-in users skip /login
 ├── components/
 │   ├── landing/          marketing page sections
+│   ├── auth/             login and signup forms
 │   ├── workspace/        form list, create / rename / delete modals
-│   ├── builder/          question list (dnd-kit), canvas, settings panel, autosave
+│   ├── builder/          question list (dnd-kit), canvas, settings, logic and design panels, autosave
 │   ├── form/             question renderers shared by the canvas and the respondent flow
 │   ├── respondent/       one-question-at-a-time flow with keyboard navigation
-│   ├── results/          summary charts and response table
-│   └── ui/               modal, menu, toggle, button, icons
-└── lib/                  typed API client, question metadata, client-side validation
+│   ├── results/          summary charts, response table, CSV export
+│   └── ui/               modal, menu, toggle, button, icons, theme toggle
+└── lib/                  typed API client (browser + server), auth cookie, question metadata,
+                          client-side validation, logic path, theme presets
 
 backend/app
-├── main.py               app factory, CORS, lifespan (create tables + seed)
+├── main.py               app factory, CORS, static uploads, lifespan (create tables, migrate, seed)
 ├── database.py           engine, session, declarative base
 ├── models.py             SQLAlchemy models
 ├── schemas.py            Pydantic request / response models
+├── auth.py               password hashing and session tokens
+├── deps.py               shared dependencies (current user, owner-scoped form loaders)
 ├── validation.py         answer normalisation and validation rules
-├── stats.py              per-question aggregation for the results page
-├── seed.py               sample data
-├── deps.py               shared dependencies (current creator, form loaders)
-└── routers/              forms, responses, public
+├── logic.py              evaluates logic rules to find the questions a respondent sees
+├── stats.py              per-question aggregation and completion rate for the results page
+├── storage.py            upload directory for file-upload answers
+├── migrate.py            adds columns to databases created before auth existed
+├── seed.py               sample forms and responses (demo account and every new signup)
+└── routers/              auth, forms, responses, public
 ```
 
 **Data flow.** Server components fetch from the API with `cache: "no-store"` and pass data to client components. Mutations go through the typed client in `lib/api.ts`; pages call `router.refresh()` afterwards so server data is re-read. The builder keeps a local draft of the questions and autosaves the whole ordered list with a single `PUT` 700 ms after the last edit, which keeps reordering, editing and deleting consistent in one request. Existing question ids are preserved so stored answers stay attached.
@@ -107,13 +115,17 @@ Source: [`docs/schema.excalidraw`](docs/schema.excalidraw)
 ```
 users          id, name, email (unique), password_hash, created_at
 auth_tokens    id, user_id → users (cascade), token (unique), created_at
-forms          id, public_id (unique, 8 chars), owner_id → users, title, status (draft|published),
-               created_at, updated_at
+forms          id, public_id (unique, 8 chars), owner_id → users (cascade), title,
+               status (draft|published), theme (JSON), created_at, updated_at
 questions      id, form_id → forms (cascade), type, title, description, required, position
 options        id, question_id → questions (cascade), label, position
+logic_rules    id, question_id → questions (cascade), operator (equals|always), value,
+               target_question_id → questions (set null = jump to thank-you), position
 responses      id, form_id → forms (cascade), submitted_at
 answers        id, response_id → responses (cascade), question_id → questions (cascade), value,
                unique (response_id, question_id)
+form_sessions  id, form_id → forms (cascade), started_at, completed_at,
+               response_id → responses (set null)
 ```
 
 - `forms.response_count` is a `column_property` (correlated `COUNT`) so list and detail endpoints never N+1.
@@ -153,7 +165,7 @@ All routes are prefixed with `/api`. Creator routes require `Authorization: Bear
 
 ## Deployment
 
-- **Backend:** [`render.yaml`](render.yaml) deploys the API to Render with a persistent disk for SQLite. Set `CORS_ORIGINS` to the frontend URL.
+- **Backend:** [`render.yaml`](render.yaml) deploys the API to Render with a persistent disk that holds the SQLite file and uploaded files. Set `CORS_ORIGINS` to the frontend URL.
 - **Frontend:** deploy `frontend/` to Vercel with `NEXT_PUBLIC_API_URL` pointing at the API.
 
 ## Assumptions
