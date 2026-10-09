@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
@@ -8,9 +9,21 @@ import { CreateFormModal } from "./CreateFormModal";
 
 const RESPONSE_LIMIT = 10;
 
-export function Sidebar({ formCount, responseCount }: { formCount: number; responseCount: number }) {
-  const [creating, setCreating] = useState(false);
+interface Props {
+  formCount: number;
+  responseCount: number;
+  draftTitle?: string;
+}
+
+export function Sidebar({ formCount, responseCount, draftTitle }: Props) {
+  const router = useRouter();
+  const [creating, setCreating] = useState(draftTitle !== undefined);
   const [expanded, setExpanded] = useState(true);
+
+  const closeCreate = () => {
+    setCreating(false);
+    if (draftTitle !== undefined) router.replace("/forms");
+  };
 
   return (
     <aside className="flex w-80 flex-none flex-col bg-admin-bg">
@@ -71,7 +84,7 @@ export function Sidebar({ formCount, responseCount }: { formCount: number; respo
           Increase response limit
         </Button>
       </div>
-      <CreateFormModal open={creating} onClose={() => setCreating(false)} />
+      <CreateFormModal open={creating} initialTitle={draftTitle} onClose={closeCreate} />
     </aside>
   );
 }

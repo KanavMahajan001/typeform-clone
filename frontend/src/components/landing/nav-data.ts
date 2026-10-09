@@ -1,21 +1,26 @@
+import { newFormHref } from "@/lib/links";
+
 export interface NavItem {
   label: string;
   sub?: string;
   isNew?: boolean;
+  href?: string;
 }
 
 export interface NavColumn {
   heading: string;
   icon: string;
   items?: NavItem[];
-  more?: string;
-  feature?: { image: string; text: string; cta: string };
+  more?: NavItem;
+  feature?: { image: string; text: string; cta: string; href?: string };
 }
 
 export interface NavMenu {
   label: string;
   columns: NavColumn[];
 }
+
+const tool = (label: string, title: string): NavItem => ({ label, href: newFormHref(title) });
 
 export const NAV_MENUS: NavMenu[] = [
   {
@@ -25,31 +30,31 @@ export const NAV_MENUS: NavMenu[] = [
         heading: "Platform",
         icon: "by-workflow",
         items: [
-          { label: "Platform overview", sub: "What is Typeform?" },
-          { label: "Typeform AI", sub: "Your AI know-pilot" },
+          { label: "Platform overview", sub: "What is Typeform?", href: "/" },
+          { label: "Typeform AI", sub: "Your AI know-pilot", href: "/#intelligent-forms" },
           { label: "Typeform MCP", sub: "Use Typeform from your AI tools", isNew: true },
-          { label: "Growth Flow", sub: "Automated workflows for GTM teams", isNew: true },
-          { label: "Research Flow", sub: "AI-moderated research studies", isNew: true },
+          { label: "Growth Flow", sub: "Automated workflows for GTM teams", isNew: true, href: "/#growth-flow" },
+          { label: "Research Flow", sub: "AI-moderated research studies", isNew: true, href: "/#research-flow" },
           { label: "Contacts & Automations", sub: "Automated workflows to grow your business" },
           { label: "Video engagement", sub: "Interactive video forms" },
-          { label: "Analytics and reporting", sub: "Answers you can act on" },
-          { label: "Integrations", sub: "Connect all your apps" },
+          { label: "Analytics and reporting", sub: "Answers you can act on", href: "/forms" },
+          { label: "Integrations", sub: "Connect all your apps", href: "/#integrations" },
         ],
       },
       {
         heading: "Tools",
         icon: "tools",
         items: [
-          { label: "Form builder" },
-          { label: "Survey maker" },
-          { label: "Quiz maker" },
-          { label: "Test maker" },
-          { label: "Poll builder" },
-          { label: "Application form builder" },
-          { label: "Landing page builder" },
-          { label: "NPS form builder" },
-          { label: "Registration form builder" },
-          { label: "Short form builder" },
+          tool("Form builder", ""),
+          tool("Survey maker", "Survey"),
+          tool("Quiz maker", "Quiz"),
+          tool("Test maker", "Test"),
+          tool("Poll builder", "Poll"),
+          tool("Application form builder", "Application form"),
+          tool("Landing page builder", "Landing page"),
+          tool("NPS form builder", "NPS survey"),
+          tool("Registration form builder", "Registration form"),
+          tool("Short form builder", "Short form"),
         ],
       },
       {
@@ -59,6 +64,7 @@ export const NAV_MENUS: NavMenu[] = [
           image: "/images/templates.webp",
           text: "Free form, survey, and quiz templates",
           cta: "Choose one →",
+          href: "/forms",
         },
       },
     ],
@@ -80,13 +86,13 @@ export const NAV_MENUS: NavMenu[] = [
         heading: "Use cases",
         icon: "by-goal",
         items: [
-          { label: "Lead generation" },
-          { label: "Employee onboarding" },
-          { label: "Employee satisfaction" },
-          { label: "Employee engagement" },
-          { label: "Customer feedback" },
+          tool("Lead generation", "Lead generation form"),
+          tool("Employee onboarding", "Employee onboarding"),
+          tool("Employee satisfaction", "Employee satisfaction survey"),
+          tool("Employee engagement", "Employee engagement survey"),
+          tool("Customer feedback", "Customer feedback survey"),
         ],
-        more: "View all use cases →",
+        more: { label: "View all use cases →" },
       },
       {
         heading: "Plans",
@@ -135,12 +141,13 @@ export const NAV_MENUS: NavMenu[] = [
   },
 ];
 
-export const RESEARCH_FEATURE = {
+export const RESEARCH_FEATURE: NavColumn = {
   heading: "Research Flow",
   icon: "star",
   feature: {
     image: "/images/research-flow.avif",
     text: "Run in-depth AI-moderated studies in hours",
     cta: "Learn more →",
+    href: "/#research-flow",
   },
 };

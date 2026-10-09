@@ -1,3 +1,5 @@
+import { NavLink } from "./NavLink";
+
 interface Feature {
   icon: string;
   title: string;
@@ -5,10 +7,12 @@ interface Feature {
 }
 
 interface Props {
+  id: string;
   eyebrow: string;
   title: string;
   text: string;
   cta: string;
+  href?: string;
   video: string;
   poster: string;
   features: Feature[];
@@ -17,9 +21,9 @@ interface Props {
   mediaLeft?: boolean;
 }
 
-export function TextMedia({ eyebrow, title, text, cta, video, poster, features, isNew, dark, mediaLeft }: Props) {
+export function TextMedia({ id, eyebrow, title, text, cta, href, video, poster, features, isNew, dark, mediaLeft }: Props) {
   return (
-    <section className={`py-[7.5rem] ${dark ? "bg-ink text-ink-25" : "bg-ink-25 text-ink"}`}>
+    <section id={id} className={`scroll-mt-[5.5rem] py-[7.5rem] ${dark ? "bg-ink text-ink-25" : "bg-ink-25 text-ink"}`}>
       <div className="container-10 flex flex-col gap-12">
         <div className={`flex flex-col items-center justify-between gap-8 lg:flex-row ${mediaLeft ? "lg:flex-row-reverse" : ""}`}>
           <div className="flex w-full max-w-[29.69rem] flex-col gap-10 lg:w-2/5">
@@ -38,9 +42,9 @@ export function TextMedia({ eyebrow, title, text, cta, video, poster, features, 
               </div>
             </div>
             <div>
-              <a href="#" className={`btn ${dark ? "btn-light" : "btn-dark"}`}>
+              <NavLink label={eyebrow} href={href} className={`btn ${dark ? "btn-light" : "btn-dark"}`}>
                 {cta}
-              </a>
+              </NavLink>
             </div>
           </div>
           <div className="relative w-full max-w-[42.31rem] overflow-hidden rounded-media lg:w-[57%]">

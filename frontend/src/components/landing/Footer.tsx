@@ -1,8 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { API_URL } from "@/lib/api";
+import { newFormHref } from "@/lib/links";
+import { NavLink } from "./NavLink";
 
 type Entry = string | { label: string; items: string[] };
+
+const HREFS: Record<string, string> = {
+  "Developers / API": `${API_URL}/docs`,
+  "Contact sales": "/forms",
+};
+
+const SOCIAL_URL: Record<string, string> = {
+  Facebook: "https://www.facebook.com/typeform",
+  X: "https://x.com/typeform",
+  Instagram: "https://www.instagram.com/typeform",
+  YouTube: "https://www.youtube.com/typeform",
+  LinkedIn: "https://www.linkedin.com/company/typeform",
+};
+
+const hrefFor = (group: string, label: string) => (group.endsWith("templates") ? newFormHref(label) : HREFS[label]);
 
 const COLUMNS: { heading: string; entries: Entry[] }[] = [
   {
@@ -118,11 +136,7 @@ const SOCIAL = [
 function Group({ entry }: { entry: Entry }) {
   const [open, setOpen] = useState(false);
   if (typeof entry === "string") {
-    return (
-      <a href="#" className="block text-base leading-[1.4]">
-        {entry}
-      </a>
-    );
+    return <NavLink label={entry} href={hrefFor("", entry)} className="block text-base leading-[1.4]" />;
   }
   return (
     <div>
@@ -144,9 +158,7 @@ function Group({ entry }: { entry: Entry }) {
       {open && (
         <div className="flex flex-col gap-4 pb-2 pl-4 pt-3">
           {entry.items.map((item) => (
-            <a key={item} href="#" className="text-base leading-[1.4]">
-              {item}
-            </a>
+            <NavLink key={item} label={item} href={hrefFor(entry.label, item)} className="text-base leading-[1.4]" />
           ))}
         </div>
       )}
@@ -172,11 +184,11 @@ export function Footer() {
               {column.heading === "Get to know us" && (
                 <div className="mt-8 flex gap-2">
                   {SOCIAL.map((social) => (
-                    <a key={social.name} href="#" aria-label={social.name} className="h-6 w-6 transition-colors hover:text-purple-400">
+                    <NavLink key={social.name} label={social.name} href={SOCIAL_URL[social.name]} className="h-6 w-6 transition-colors hover:text-purple-400">
                       <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
                         <path d={social.path} />
                       </svg>
-                    </a>
+                    </NavLink>
                   ))}
                 </div>
               )}
@@ -187,9 +199,9 @@ export function Footer() {
       <div className="py-8">
         <div className="container-site flex flex-col justify-between gap-4 text-sm sm:flex-row sm:items-center">
           <div className="flex flex-wrap items-center gap-4">
-            <a href="#">Cookie settings</a>
-            <a href="#">Check our cookies policy to delete cookies</a>
-            <a href="#">Report abuse</a>
+            <NavLink label="Cookie settings" />
+            <NavLink label="Cookies policy">Check our cookies policy to delete cookies</NavLink>
+            <NavLink label="Report abuse" />
           </div>
           <div>© Typeform</div>
         </div>

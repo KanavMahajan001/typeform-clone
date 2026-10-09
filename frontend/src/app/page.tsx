@@ -14,10 +14,12 @@ export default function HomePage() {
       <main>
         <Hero />
         <TextMedia
+          id="intelligent-forms"
           eyebrow="Intelligent forms"
           title="Build forms at the drop of a prompt"
           text="With over 48 million responses collected monthly, Typeform AI builds best-in-class forms proven to get 3.5x more data. Brand easily, customize everything."
           cta="Explore forms"
+          href="/forms"
           video="/videos/prompt-branding.mp4"
           poster="/images/intelligent-forms.avif"
           features={[
@@ -48,6 +50,7 @@ export default function HomePage() {
           </div>
         </section>
         <TextMedia
+          id="growth-flow"
           dark
           mediaLeft
           isNew
@@ -79,6 +82,7 @@ export default function HomePage() {
           <img src="/images/shine.avif" alt="" className="w-full max-w-[39%]" />
         </div>
         <TextMedia
+          id="research-flow"
           dark
           isNew
           eyebrow="Research flow"

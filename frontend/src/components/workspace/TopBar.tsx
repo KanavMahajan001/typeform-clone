@@ -1,11 +1,11 @@
 "use client";
 
-import { toast } from "sonner";
 import { LogoIcon } from "@/components/landing/Logo";
 import { Button } from "@/components/ui/Button";
 import { BrushIcon, ChevronDownIcon, HelpIcon, IntegrationsIcon } from "@/components/ui/Icons";
+import { comingSoon } from "@/lib/links";
 
-const soon = (feature: string) => () => toast(`${feature} is coming soon`);
+const soon = (feature: string) => () => comingSoon(feature);
 
 export function TopBar() {
   return (

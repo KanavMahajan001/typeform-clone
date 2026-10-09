@@ -7,9 +7,15 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 
-export function CreateFormModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+interface Props {
+  open: boolean;
+  initialTitle?: string;
+  onClose: () => void;
+}
+
+export function CreateFormModal({ open, initialTitle = "", onClose }: Props) {
   const router = useRouter();
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(initialTitle);
   const [busy, setBusy] = useState(false);
 
   const submit = async (event: FormEvent) => {

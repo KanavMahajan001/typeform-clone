@@ -43,7 +43,7 @@ function Row({ reverse }: { reverse?: boolean }) {
 
 export function Integrations() {
   return (
-    <section className="bg-ink-25 py-12 text-ink">
+    <section id="integrations" className="scroll-mt-[5.5rem] bg-ink-25 py-12 text-ink">
       <div className="container-site">
         <div className="flex flex-col gap-12 rounded-section bg-white py-20">
           <h2 className="heading-four px-12 text-center">Integrate with your tech stack</h2>

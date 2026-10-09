@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { NavLink } from "./NavLink";
 import { NAV_MENUS, RESEARCH_FEATURE, type NavColumn } from "./nav-data";
 
 function Chevron({ open }: { open: boolean }) {
@@ -28,9 +29,9 @@ function FeatureBlock({ column }: { column: NavColumn }) {
     <div className="flex flex-col gap-2">
       <img src={column.feature.image} alt="" className="mb-2 w-full max-w-[13rem] rounded-card" />
       <p className="text-base leading-[1.4]">{column.feature.text}</p>
-      <a href="#" className="text-sm underline underline-offset-4">
+      <NavLink label={column.heading} href={column.feature.href} className="text-sm underline underline-offset-4">
         {column.feature.cta}
-      </a>
+      </NavLink>
     </div>
   );
 }
@@ -46,7 +47,7 @@ function Column({ column, last }: { column: NavColumn; last: boolean }) {
         <ul className="flex flex-col gap-6">
           {column.items.map((item) => (
             <li key={item.label}>
-              <a href="#" className="flex flex-col transition-[padding] duration-200 hover:pl-2">
+              <NavLink label={item.label} href={item.href} className="flex flex-col transition-[padding] duration-200 hover:pl-2">
                 <span className="flex items-center gap-2 text-base leading-[1.4]">
                   {item.label}
                   {item.isNew && (
@@ -56,16 +57,12 @@ function Column({ column, last }: { column: NavColumn; last: boolean }) {
                   )}
                 </span>
                 {item.sub && <span className="text-xs leading-[1.3] text-ink-300">{item.sub}</span>}
-              </a>
+              </NavLink>
             </li>
           ))}
         </ul>
       )}
-      {column.more && (
-        <a href="#" className="text-base underline underline-offset-4">
-          {column.more}
-        </a>
-      )}
+      {column.more && <NavLink label={column.heading} href={column.more.href} className="text-base underline underline-offset-4">{column.more.label}</NavLink>}
       <FeatureBlock column={column} />
       {column.heading === "Templates" && (
         <>
@@ -73,7 +70,7 @@ function Column({ column, last }: { column: NavColumn; last: boolean }) {
             <img src={`/icons/${RESEARCH_FEATURE.icon}.svg`} alt="" className="h-4 w-4" />
             <h3 className="text-sm uppercase leading-none">{RESEARCH_FEATURE.heading}</h3>
           </div>
-          <FeatureBlock column={RESEARCH_FEATURE as NavColumn} />
+          <FeatureBlock column={RESEARCH_FEATURE} />
         </>
       )}
     </div>
@@ -101,9 +98,7 @@ export function Header() {
               </li>
             ))}
             <li onMouseEnter={() => setOpen(null)}>
-              <a href="#" className="flex h-[5.5rem] items-center px-1.5 text-base">
-                Pricing
-              </a>
+              <NavLink label="Pricing" className="flex h-[5.5rem] items-center px-1.5 text-base" />
             </li>
           </ul>
         </nav>
@@ -111,9 +106,7 @@ export function Header() {
           <Link href="/forms" className="hidden px-3 text-base sm:block">
             Log in
           </Link>
-          <a href="#" className="btn btn-outline hidden text-base sm:inline-flex">
-            Contact sales
-          </a>
+          <NavLink label="Contact sales" className="btn btn-outline hidden text-base sm:inline-flex" />
           <Link href="/forms" className="btn btn-light min-h-10 min-w-0 px-5 text-base">
             Sign up
           </Link>
@@ -122,6 +115,7 @@ export function Header() {
       {NAV_MENUS.map((menu) => (
         <div
           key={menu.label}
+          onClick={() => setOpen(null)}
           className={`absolute inset-x-0 top-[5.5rem] border-b border-ink-800 bg-ink py-12 shadow-[0_4px_4px_#0000000a] ${open === menu.label ? "block" : "hidden"}`}
         >
           <div className="mx-auto grid max-w-[62rem] grid-cols-3 gap-8 px-8">
